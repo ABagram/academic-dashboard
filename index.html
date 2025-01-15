@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div>
+        <h1>Academic Dashboard</h1>
+    </div>
     <div class="course-input-container">
         <button id="add-course-btn">Add Course</button>
         <div id="course-cards-container"></div>
@@ -22,7 +25,10 @@
         <input type="number" id="calendar-height" min="100" value="667" disabled>
         <label><input type="checkbox" id="override-days-checkbox"> Override selected days</label>
     </div>
-    <div id="calendar-container"></div>
+    <div id="main-container">
+        <div id="course-cards-container"></div>
+        <div id="calendar-container"></div>
+    </div>
     <script>
         function updateCalendar() {
             const calendarContainer = document.getElementById('calendar-container');
@@ -134,8 +140,8 @@
             const courses = Array.from(document.querySelectorAll('.course-card')).map(course => {
                 const courseCode = course.querySelector('.course-code').textContent.trim();
                 const courseSection = course.querySelector('.course-section').textContent.trim();
-                const courseTitle = course.querySelector('.editable[data-placeholder="Enter course title"]').textContent.trim();
-                const location = course.querySelector('.editable[data-placeholder="Enter location"]').textContent.trim();
+                const courseTitle = course.querySelector('.editable[data-placeholder="Course Title"]').textContent.trim();
+                const location = course.querySelector('.editable[data-placeholder="Location / Room No. / Room Code"]').textContent.trim();
                 const days = Array.from(course.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
                 const sameTime = course.querySelector('input[id^="same-time-checkbox"]').checked;
                 const times = Array.from(course.querySelectorAll('.time-input')).map(input => ({
@@ -178,11 +184,11 @@
                 newCard.innerHTML = `
                     <div class="course-details">
                         <div class="course-code-section">
-                            <div class="editable course-code" data-placeholder="Enter course code">${course.courseCode}</div>
-                            <div class="editable course-section" data-placeholder="Enter course section">${course.courseSection}</div>
+                            <div class="editable course-code" data-placeholder="Course Code">${course.courseCode}</div>
+                            <div class="editable course-section" data-placeholder="Course Section">${course.courseSection}</div>
                         </div>
-                        <div class="editable" data-placeholder="Enter course title">${course.courseTitle}</div>
-                        <div class="editable" data-placeholder="Enter location">${course.location}</div>
+                        <div class="editable" data-placeholder="Course Title">${course.courseTitle}</div>
+                        <div class="editable" data-placeholder="Location / Room No. / Room Code">${course.location}</div>
                     </div>
                     <div class="schedule-details">
                         <div class="days-checkboxes">

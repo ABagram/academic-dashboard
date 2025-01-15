@@ -1,9 +1,17 @@
 html {
     height: 100%;
+    background-color: #0039c8;
 }
 
 * {
     font-family: 'Space Grotesk', sans-serif;
+}
+
+h1{
+    font-size: 5em;
+    font-weight: bold;
+    color: white;
+    text-align: center; /* Center the h1 element */
 }
 
 body {
