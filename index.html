@@ -4,102 +4,492 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule Constructor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="course-input-container">
-    <button id="add-course-btn">Add Course</button>
-    <table>
-        <thead>
-            <tr>
-                <th>Course Code</th>
-                <th>Course Title</th>
-                <th>Course Section</th>
-                <th>Schedule</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows for user input will go here -->
-        </tbody>
-    </table>
-</div>
-<div class="canvas-container"></div>
-<script>
-    document.getElementById('add-course-btn').addEventListener('click', function() {
-        const tableBody = document.querySelector('.course-input-container tbody');
-        const uniqueId = Date.now();
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td><input type="text" name="course-code" placeholder="Enter course code"></td>
-            <td><input type="text" name="course-title" placeholder="Enter course title"></td>
-            <td><input type="text" name="course-section" placeholder="Enter course section"></td>
-            <td>
-                <div class="days-checkboxes">
-                    <input type="checkbox" id="sunday-${uniqueId}" name="days" value="Sunday"><label for="sunday-${uniqueId}">Su</label>
-                    <input type="checkbox" id="monday-${uniqueId}" name="days" value="Monday"><label for="monday-${uniqueId}">M</label>
-                    <input type="checkbox" id="tuesday-${uniqueId}" name="days" value="Tuesday"><label for="tuesday-${uniqueId}">Tu</label>
-                    <input type="checkbox" id="wednesday-${uniqueId}" name="days" value="Wednesday"><label for="wednesday-${uniqueId}">W</label>
-                    <input type="checkbox" id="thursday-${uniqueId}" name="days" value="Thursday"><label for="thursday-${uniqueId}">Th</label>
-                    <input type="checkbox" id="friday-${uniqueId}" name="days" value="Friday"><label for="friday-${uniqueId}">F</label>
-                    <input type="checkbox" id="saturday-${uniqueId}" name="days" value="Saturday"><label for="saturday-${uniqueId}">Sa</label>
-                    
-                </div>
-                <div>
-                    <label><input type="checkbox" id="same-time-checkbox-${uniqueId}"> Same time for all days</label>
-                </div>
-                <table id="time-inputs-${uniqueId}">
-                    <thead>
-                        <tr>
-                            <th>Day</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </td>
-        `;
-        tableBody.appendChild(newRow);
+    <div class="course-input-container">
+        <button id="add-course-btn">Add Course</button>
+        <div id="course-cards-container"></div>
+    </div>
+    <div class="canvas-container"></div>
+    <div class="calendar-size-inputs">
+        <label for="device-select">Device:</label>
+        <select id="device-select"></select>
+        <label for="calendar-width">Width:</label>
+        <input type="number" id="calendar-width" min="100" value="375" disabled>
+        <label for="calendar-height">Height:</label>
+        <input type="number" id="calendar-height" min="100" value="667" disabled>
+        <label><input type="checkbox" id="override-days-checkbox"> Override selected days</label>
+    </div>
+    <div id="calendar-container"></div>
+    <script>
+        function updateCalendar() {
+            const calendarContainer = document.getElementById('calendar-container');
+            const overrideDays = document.getElementById('override-days-checkbox').checked;
+            const courses = document.querySelectorAll('.course-card');
+            let earliestStartTime = '23:59';
+            let latestEndTime = '00:00';
 
-        const sameTimeCheckbox = newRow.querySelector(`#same-time-checkbox-${uniqueId}`);
-        const dayCheckboxes = newRow.querySelectorAll('input[name="days"]');
-        const timeInputsBody = newRow.querySelector(`#time-inputs-${uniqueId} tbody`);
+            courses.forEach(course => {
+                const startTimes = course.querySelectorAll('.start-time');
+                const endTimes = course.querySelectorAll('.end-time');
 
-        function updateTimeInputs() {
-            if (sameTimeCheckbox.checked) {
-                timeInputsBody.innerHTML = '';
-                const selectedDays = Array.from(dayCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value).join(', ');
-                if (selectedDays) {
-                    timeInputsBody.innerHTML = `
-                        <tr>
-                            <td>${selectedDays}</td>
-                            <td><input type="time" name="start-time"></td>
-                            <td><input type="time" name="end-time"></td>
-                        </tr>
-                    `;
-                }
-            } else {
-                timeInputsBody.innerHTML = '';
-                dayCheckboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        const day = checkbox.value;
-                        timeInputsBody.innerHTML += `
-                            <tr>
-                                <td>${day}</td>
-                                <td><input type="time" name="${day.toLowerCase()}-start-time"></td>
-                                <td><input type="time" name="${day.toLowerCase()}-end-time"></td>
-                            </tr>
-                        `;
+                startTimes.forEach(startTimeInput => {
+                    if (startTimeInput.value && startTimeInput.value < earliestStartTime) {
+                        earliestStartTime = startTimeInput.value;
                     }
+                });
+
+                endTimes.forEach(endTimeInput => {
+                    if (endTimeInput.value && endTimeInput.value > latestEndTime) {
+                        latestEndTime = endTimeInput.value;
+                    }
+                });
+            });
+
+            calendarContainer.innerHTML = `
+                <div class="calendar-header">
+                    <div class="calendar-time"></div>
+                    <div class="calendar-day">Sunday</div>
+                    <div class="calendar-day">Monday</div>
+                    <div class="calendar-day">Tuesday</div>
+                    <div class="calendar-day">Wednesday</div>
+                    <div class="calendar-day">Thursday</div>
+                    <div class="calendar-day">Friday</div>
+                    <div class="calendar-day">Saturday</div>
+                </div>
+            `;
+
+            const timeRange = getTimeRange(earliestStartTime, latestEndTime);
+            const rowHeight = document.getElementById('calendar-height').value / timeRange.length;
+            timeRange.forEach(time => {
+                const timeRow = document.createElement('div');
+                timeRow.className = 'calendar-row';
+                timeRow.style.height = `${rowHeight}px`;
+                timeRow.innerHTML = `<div class="calendar-time">${time}</div>`;
+                for (let i = 0; i < 7; i++) {
+                    timeRow.innerHTML += `<div class="calendar-cell"></div>`;
+                }
+                calendarContainer.appendChild(timeRow);
+            });
+
+            if (!overrideDays) {
+                courses.forEach(course => {
+                    const courseCode = course.querySelector('.course-code').textContent.trim();
+                    const days = course.querySelectorAll('input[name="days"]:checked');
+                    days.forEach(day => {
+                        const dayIndex = getDayIndex(day.value);
+                        const startTime = course.querySelector(`input[name="${day.value.toLowerCase()}-start-time"]`).value;
+                        const endTime = course.querySelector(`input[name="${day.value.toLowerCase()}-end-time"]`).value;
+                        if (startTime && endTime) {
+                            const courseDiv = document.createElement('div');
+                            courseDiv.className = 'calendar-course';
+                            courseDiv.innerHTML = `
+                                <div class="course-time start-time">${startTime}</div>
+                                <div class="course-code">${courseCode}</div>
+                                <div class="course-time end-time">${endTime}</div>
+                            `;
+                            const startRow = getTimeRowIndex(startTime, earliestStartTime);
+                            const endRow = getTimeRowIndex(endTime, earliestStartTime);
+                            const startOffset = getTimeOffset(startTime);
+                            const endOffset = getTimeOffset(endTime);
+                            courseDiv.style.top = `${startOffset * 100}%`;
+                            courseDiv.style.height = `${(endRow - startRow + endOffset - startOffset) * 100}%`;
+                            calendarContainer.children[startRow + 1].children[dayIndex + 1].appendChild(courseDiv);
+                        }
+                    });
                 });
             }
         }
 
-        sameTimeCheckbox.addEventListener('change', updateTimeInputs);
-        dayCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateTimeInputs);
+        function getTimeRange(start, end) {
+            const times = [];
+            let currentTime = new Date(`1970-01-01T${start}Z`);
+            const endTime = new Date(`1970-01-01T${end}Z`);
+            while (currentTime <= endTime) {
+                times.push(currentTime.toISOString().substr(11, 5).slice(0, 2) + ':00');
+                currentTime.setHours(currentTime.getHours() + 1);
+            }
+            return times;
+        }
+
+        function getDayIndex(day) {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return days.indexOf(day);
+        }
+
+        function getTimeRowIndex(time, start) {
+            const startTime = new Date(`1970-01-01T${start}Z`);
+            const currentTime = new Date(`1970-01-01T${time}Z`);
+            return Math.floor((currentTime - startTime) / (60 * 60000));
+        }
+
+        function getTimeOffset(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            return (minutes / 60);
+        }
+
+        function saveToLocalStorage() {
+            const courses = Array.from(document.querySelectorAll('.course-card')).map(course => {
+                const courseCode = course.querySelector('.course-code').textContent.trim();
+                const courseSection = course.querySelector('.course-section').textContent.trim();
+                const courseTitle = course.querySelector('.editable[data-placeholder="Enter course title"]').textContent.trim();
+                const location = course.querySelector('.editable[data-placeholder="Enter location"]').textContent.trim();
+                const days = Array.from(course.querySelectorAll('input[name="days"]:checked')).map(checkbox => checkbox.value);
+                const sameTime = course.querySelector('input[id^="same-time-checkbox"]').checked;
+                const times = Array.from(course.querySelectorAll('.time-input')).map(input => ({
+                    day: input.querySelector('span').textContent,
+                    startTime: input.querySelector('.start-time').value,
+                    endTime: input.querySelector('.end-time').value
+                }));
+                return { courseCode, courseSection, courseTitle, location, days, sameTime, times };
+            });
+
+            const calendarWidth = document.getElementById('calendar-width').value;
+            const calendarHeight = document.getElementById('calendar-height').value;
+            const overrideDays = document.getElementById('override-days-checkbox').checked;
+            const deviceSelect = document.getElementById('device-select').value;
+
+            localStorage.setItem('courses', JSON.stringify(courses));
+            localStorage.setItem('calendarWidth', calendarWidth);
+            localStorage.setItem('calendarHeight', calendarHeight);
+            localStorage.setItem('overrideDays', overrideDays);
+            localStorage.setItem('deviceSelect', deviceSelect);
+        }
+
+        function loadFromLocalStorage() {
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const calendarWidth = localStorage.getItem('calendarWidth') || 375;
+            const calendarHeight = localStorage.getItem('calendarHeight') || 667;
+            const overrideDays = JSON.parse(localStorage.getItem('overrideDays')) || false;
+            const deviceSelect = localStorage.getItem('deviceSelect') || '375x667';
+
+            document.getElementById('calendar-width').value = calendarWidth;
+            document.getElementById('calendar-height').value = calendarHeight;
+            document.getElementById('override-days-checkbox').checked = overrideDays;
+            document.getElementById('device-select').value = deviceSelect;
+
+            const cardsContainer = document.getElementById('course-cards-container');
+            courses.forEach(course => {
+                const uniqueId = Date.now();
+                const newCard = document.createElement('div');
+                newCard.className = 'course-card';
+                newCard.innerHTML = `
+                    <div class="course-details">
+                        <div class="course-code-section">
+                            <div class="editable course-code" data-placeholder="Enter course code">${course.courseCode}</div>
+                            <div class="editable course-section" data-placeholder="Enter course section">${course.courseSection}</div>
+                        </div>
+                        <div class="editable" data-placeholder="Enter course title">${course.courseTitle}</div>
+                        <div class="editable" data-placeholder="Enter location">${course.location}</div>
+                    </div>
+                    <div class="schedule-details">
+                        <div class="days-checkboxes">
+                            ${['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => `
+                                <input type="checkbox" id="${day.toLowerCase()}-${uniqueId}" name="days" value="${day}" ${course.days.includes(day) ? 'checked' : ''}><label for="${day.toLowerCase()}-${uniqueId}">${day.slice(0, 2)}</label>
+                            `).join('')}
+                        </div>
+                        <div>
+                            <label><input type="checkbox" id="same-time-checkbox-${uniqueId}" ${course.sameTime ? 'checked' : ''}> Same time for all days</label>
+                        </div>
+                        <div id="time-inputs-${uniqueId}" class="time-inputs">
+                            ${course.times.map(time => `
+                                <div class="time-input">
+                                    <span>${time.day}</span>
+                                    <input type="time" name="${time.day.toLowerCase()}-start-time" class="start-time" value="${time.startTime}">
+                                    <input type="time" name="${time.day.toLowerCase()}-end-time" class="end-time" value="${time.endTime}">
+                                    <span class="duration"></span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                cardsContainer.appendChild(newCard);
+
+                const sameTimeCheckbox = newCard.querySelector(`#same-time-checkbox-${uniqueId}`);
+                const dayCheckboxes = newCard.querySelectorAll('input[name="days"]');
+                const timeInputsContainer = newCard.querySelector(`#time-inputs-${uniqueId}`);
+
+                function updateTimeInputs() {
+                    if (sameTimeCheckbox.checked) {
+                        timeInputsContainer.innerHTML = '';
+                        const selectedDays = Array.from(dayCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value).join(', ');
+                        if (selectedDays) {
+                            timeInputsContainer.innerHTML = `
+                                <div class="time-input">
+                                    <span>${selectedDays}</span>
+                                    <input type="time" name="start-time" class="start-time">
+                                    <input type="time" name="end-time" class="end-time">
+                                    <span class="duration"></span>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        timeInputsContainer.innerHTML = '';
+                        dayCheckboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                const day = checkbox.value;
+                                timeInputsContainer.innerHTML += `
+                                    <div class="time-input">
+                                        <span>${day}</span>
+                                        <input type="time" name="${day.toLowerCase()}-start-time" class="start-time">
+                                        <input type="time" name="${day.toLowerCase()}-end-time" class="end-time">
+                                        <span class="duration"></span>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    addDurationListeners();
+                    updateCalendar();
+                }
+
+                function addDurationListeners() {
+                    const timeInputs = newCard.querySelectorAll('.time-input');
+                    timeInputs.forEach(input => {
+                        const startTimeInput = input.querySelector('.start-time');
+                        const endTimeInput = input.querySelector('.end-time');
+                        const durationSpan = input.querySelector('.duration');
+
+                        function calculateDuration() {
+                            const startTime = startTimeInput.value;
+                            const endTime = endTimeInput.value;
+                            if (startTime && endTime) {
+                                const start = new Date(`1970-01-01T${startTime}Z`);
+                                const end = new Date(`1970-01-01T${endTime}Z`);
+                                const diff = (end - start) / 60000; // difference in minutes
+                                const hours = Math.floor(diff / 60);
+                                const minutes = diff % 60;
+                                durationSpan.textContent = `${hours}h ${minutes}m`;
+                            } else {
+                                durationSpan.textContent = '';
+                            }
+                        }
+
+                        startTimeInput.addEventListener('input', calculateDuration);
+                        endTimeInput.addEventListener('input', calculateDuration);
+                    });
+                }
+
+                sameTimeCheckbox.addEventListener('change', updateTimeInputs);
+                dayCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateTimeInputs);
+                });
+
+                // Make divs editable on double-click
+                newCard.querySelectorAll('.editable').forEach(div => {
+                    div.addEventListener('dblclick', function() {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = div.textContent.trim();
+                        input.placeholder = div.getAttribute('data-placeholder');
+                        input.style.fontSize = window.getComputedStyle(div).fontSize;
+                        input.style.fontWeight = window.getComputedStyle(div).fontWeight;
+                        div.textContent = '';
+                        div.appendChild(input);
+                        input.focus();
+
+                        input.addEventListener('blur', function() {
+                            div.textContent = input.value.trim() || input.placeholder;
+                            div.removeChild(input);
+                        });
+
+                        input.addEventListener('keypress', function(e) {
+                            if (e.key === 'Enter') {
+                                input.blur();
+                            }
+                        });
+                    });
+                });
+
+                updateCalendar();
+            });
+        }
+
+        document.getElementById('add-course-btn').addEventListener('click', function() {
+            const cardsContainer = document.getElementById('course-cards-container');
+            const uniqueId = Date.now();
+            const newCard = document.createElement('div');
+            newCard.className = 'course-card';
+            newCard.innerHTML = `
+                <div class="course-details">
+                    <div class="course-code-section">
+                        <div class="editable course-code" data-placeholder="Enter course code"></div>
+                        <div class="editable course-section" data-placeholder="Enter course section"></div>
+                    </div>
+                    <div class="editable" data-placeholder="Enter course title"></div>
+                    <div class="editable" data-placeholder="Enter location"></div>
+                </div>
+                <div class="schedule-details">
+                    <div class="days-checkboxes">
+                        <input type="checkbox" id="sunday-${uniqueId}" name="days" value="Sunday"><label for="sunday-${uniqueId}">Su</label>
+                        <input type="checkbox" id="monday-${uniqueId}" name="days" value="Monday"><label for="monday-${uniqueId}">M</label>
+                        <input type="checkbox" id="tuesday-${uniqueId}" name="days" value="Tuesday"><label for="tuesday-${uniqueId}">Tu</label>
+                        <input type="checkbox" id="wednesday-${uniqueId}" name="days" value="Wednesday"><label for="wednesday-${uniqueId}">W</label>
+                        <input type="checkbox" id="thursday-${uniqueId}" name="days" value="Thursday"><label for="thursday-${uniqueId}">Th</label>
+                        <input type="checkbox" id="friday-${uniqueId}" name="days" value="Friday"><label for="friday-${uniqueId}">F</label>
+                        <input type="checkbox" id="saturday-${uniqueId}" name="days" value="Saturday"><label for="saturday-${uniqueId}">Sa</label>
+                    </div>
+                    <div>
+                        <label><input type="checkbox" id="same-time-checkbox-${uniqueId}"> Same time for all days</label>
+                    </div>
+                    <div id="time-inputs-${uniqueId}" class="time-inputs"></div>
+                </div>
+            `;
+            cardsContainer.appendChild(newCard);
+
+            const sameTimeCheckbox = newCard.querySelector(`#same-time-checkbox-${uniqueId}`);
+            const dayCheckboxes = newCard.querySelectorAll('input[name="days"]');
+            const timeInputsContainer = newCard.querySelector(`#time-inputs-${uniqueId}`);
+
+            function updateTimeInputs() {
+                if (sameTimeCheckbox.checked) {
+                    timeInputsContainer.innerHTML = '';
+                    const selectedDays = Array.from(dayCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value).join(', ');
+                    if (selectedDays) {
+                        timeInputsContainer.innerHTML = `
+                            <div class="time-input">
+                                <span>${selectedDays}</span>
+                                <input type="time" name="start-time" class="start-time">
+                                <input type="time" name="end-time" class="end-time">
+                                <span class="duration"></span>
+                            </div>
+                        `;
+                    }
+                } else {
+                    timeInputsContainer.innerHTML = '';
+                    dayCheckboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            const day = checkbox.value;
+                            timeInputsContainer.innerHTML += `
+                                <div class="time-input">
+                                    <span>${day}</span>
+                                    <input type="time" name="${day.toLowerCase()}-start-time" class="start-time">
+                                    <input type="time" name="${day.toLowerCase()}-end-time" class="end-time">
+                                    <span class="duration"></span>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                addDurationListeners();
+                updateCalendar();
+            }
+
+            function addDurationListeners() {
+                const timeInputs = newCard.querySelectorAll('.time-input');
+                timeInputs.forEach(input => {
+                    const startTimeInput = input.querySelector('.start-time');
+                    const endTimeInput = input.querySelector('.end-time');
+                    const durationSpan = input.querySelector('.duration');
+
+                    function calculateDuration() {
+                        const startTime = startTimeInput.value;
+                        const endTime = endTimeInput.value;
+                        if (startTime && endTime) {
+                            const start = new Date(`1970-01-01T${startTime}Z`);
+                            const end = new Date(`1970-01-01T${endTime}Z`);
+                            const diff = (end - start) / 60000; // difference in minutes
+                            const hours = Math.floor(diff / 60);
+                            const minutes = diff % 60;
+                            durationSpan.textContent = `${hours}h ${minutes}m`;
+                        } else {
+                            durationSpan.textContent = '';
+                        }
+                    }
+
+                    startTimeInput.addEventListener('input', calculateDuration);
+                    endTimeInput.addEventListener('input', calculateDuration);
+                });
+            }
+
+            sameTimeCheckbox.addEventListener('change', updateTimeInputs);
+            dayCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateTimeInputs);
+            });
+
+            // Make divs editable on double-click
+            newCard.querySelectorAll('.editable').forEach(div => {
+                div.addEventListener('dblclick', function() {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = div.textContent.trim();
+                    input.placeholder = div.getAttribute('data-placeholder');
+                    input.style.fontSize = window.getComputedStyle(div).fontSize;
+                    input.style.fontWeight = window.getComputedStyle(div).fontWeight;
+                    div.textContent = '';
+                    div.appendChild(input);
+                    input.focus();
+
+                    input.addEventListener('blur', function() {
+                        div.textContent = input.value.trim() || input.placeholder;
+                        div.removeChild(input);
+                    });
+
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            input.blur();
+                        }
+                    });
+                });
+            });
+
+            updateCalendar();
+            saveToLocalStorage();
         });
-    });
-</script>
-<link rel="stylesheet" href="style.css">
+
+        document.getElementById('device-select').addEventListener('change', function() {
+            const deviceSelect = document.getElementById('device-select');
+            const widthInput = document.getElementById('calendar-width');
+            const heightInput = document.getElementById('calendar-height');
+            const selectedValue = deviceSelect.value;
+
+            if (selectedValue === 'custom') {
+                widthInput.disabled = false;
+                heightInput.disabled = false;
+            } else {
+                const [width, height] = selectedValue.split('x');
+                widthInput.value = width;
+                heightInput.value = height;
+                widthInput.disabled = true;
+                heightInput.disabled = true;
+            }
+
+            const calendarContainer = document.getElementById('calendar-container');
+            calendarContainer.style.width = widthInput.value + 'px';
+            calendarContainer.style.height = heightInput.value + 'px';
+            updateCalendar();
+            saveToLocalStorage();
+        });
+
+        document.getElementById('calendar-width').addEventListener('input', function() {
+            const width = document.getElementById('calendar-width').value;
+            const calendarContainer = document.getElementById('calendar-container');
+            calendarContainer.style.width = width + 'px';
+            saveToLocalStorage();
+        });
+
+        document.getElementById('calendar-height').addEventListener('input', function() {
+            const height = document.getElementById('calendar-height').value;
+            const calendarContainer = document.getElementById('calendar-container');
+            calendarContainer.style.height = height + 'px';
+            updateCalendar();
+            saveToLocalStorage();
+        });
+
+        document.getElementById('override-days-checkbox').addEventListener('change', function() {
+            updateCalendar();
+            saveToLocalStorage();
+        });
+
+        // Load device options from external file
+        fetch('device-options.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('device-select').innerHTML = data;
+                loadFromLocalStorage();
+            });
+    </script>
 </body>
 </html>

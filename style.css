@@ -1,6 +1,15 @@
+html {
+    height: 100%;
+}
+
+* {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+    height: 100%;
+    margin: 0;
+    padding: 20px;
 }
 
 .course-input-container {
@@ -12,6 +21,9 @@ button#add-course-btn {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    border-radius: 40px;
+    background-color: #acff01;
+    border: none;
 }
 
 table {
@@ -33,6 +45,8 @@ table th {
 .days-checkboxes label {
     display: inline-block;
     margin-right: 10px;
+    font-size: 85%;
+    background-color: white; /* Ensure background color is always white */
 }
 
 .days-checkboxes input[type="checkbox"] {
@@ -44,14 +58,14 @@ table th {
     height: 30px;
     line-height: 30px;
     border-radius: 50%;
-    background-color: #f2f2f2;
     text-align: center;
     cursor: pointer;
     font-weight: bold;
+    background-color: white; /* Ensure background color is always white */
 }
 
 .days-checkboxes input[type="checkbox"]:checked + label {
-    background-color: #007bff;
+    background-color: #0039c8;
     color: white;
 }
 
@@ -61,4 +75,173 @@ table th {
 
 #time-inputs th, #time-inputs td {
     padding: 5px;
+}
+
+#course-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.course-card {
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f4f4f4; /* Ensure background color is always set */
+}
+
+.course-details .course-code-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.course-details .course-code {
+    font-size: 2em;
+    font-weight: bold;
+    flex: 2;
+    margin-right: 10px;
+}
+
+.course-details .course-section {
+    flex: 1;
+}
+
+.course-details input,
+.schedule-details input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+.course-details .editable {
+    width: 100%;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: text;
+}
+
+.course-details .editable:empty:before {
+    content: attr(data-placeholder);
+    color: #aaa;
+}
+
+.course-details .editable input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 8px;
+    box-sizing: border-box;
+    font-size: inherit;
+    font-weight: inherit;
+    border: 1px solid #ddd;
+    background-color: transparent;
+}
+
+.schedule-details {
+    margin-top: 10px;
+}
+
+.time-input {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.time-input span {
+    width: 60px;
+    display: inline-block;
+}
+
+.time-input input[type="time"] {
+    margin-left: 10px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.time-input .duration {
+    margin-left: 10px;
+    font-size: 75%;
+    color: lightgray;
+}
+
+@media (min-width: 768px) {
+    .course-card {
+        width: calc(50% - 20px);
+        background-color: #f4f4f4; /* Ensure background color is always set */
+    }
+}
+
+@media (min-width: 1024px) {
+    .course-card {
+        width: calc(33.333% - 20px);
+    }
+}
+
+.calendar-header {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+}
+
+.calendar-time {
+    width: 60px;
+    text-align: center;
+    border-right: 1px solid #ddd;
+    padding: 5px;
+}
+
+.calendar-day {
+    flex: 1;
+    text-align: center;
+    border-right: 1px solid #ddd;
+    padding: 5px;
+}
+
+.calendar-row {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+}
+
+.calendar-cell {
+    flex: 1;
+    border-right: 1px solid #ddd;
+    height: 60px;
+    position: relative;
+}
+
+.calendar-course {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #f2f2f2;
+    border: 1px solid #ddd;
+    padding: 5px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 1vh;
+}
+
+.calendar-course .course-time {
+    font-size: 0.8em;
+}
+
+.calendar-course .course-code {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.calendar-course .end-time {
+    text-align: right;
 }
