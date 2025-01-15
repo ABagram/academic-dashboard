@@ -124,6 +124,14 @@ table th {
     background-color: #f4f4f4; /* Ensure background color is always set */
 }
 
+.program-card {
+    padding: 30px;
+    border-radius: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: black; /* Ensure background color is always set */
+}
+
 .course-details .course-code-section {
     display: flex;
     justify-content: space-between;
@@ -131,11 +139,37 @@ table th {
     margin-bottom: 10px;
 }
 
-.course-details .course-code {
+#program-name, #program-code {
+    color: white;
+    font-size: 2em;
+    font-weight: bold;
+    cursor: text;
+    border: none; /* Ensure no border when not editing */
+    border-radius: 4px;
+    padding: 8px;
+    background-color: transparent;
+}
+
+#program-name:empty:before, #program-code:empty:before {
+    content: attr(placeholder);
+    color: #aaa;
+}
+
+#program-name input, #program-code input {
+    width: 100%;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    font-size: inherit;
+    font-weight: inherit;
+    background-color: transparent;
+    color: #aaa; /* Color similar to placeholder text */
+}
+
+.course-details .course-code, #program-name{
     font-size: 2em;
     font-weight: bold;
     flex: 2;
-    margin-right: 10px;
 }
 
 .course-details .course-section {
@@ -143,18 +177,16 @@ table th {
 }
 
 .course-details input,
-.schedule-details input {
+.schedule-details input, #program-name, #program-code{
     display: block;
     width: 100%;
     margin-bottom: 10px;
     padding: 8px;
-    border: 1px solid #ddd;
     border-radius: 4px;
     background-color: transparent;
 }
 
-.course-details .editable {
-    width: 100%;
+.course-details .editable{
     margin-bottom: 10px;
     border: 1px solid transparent;
     border-radius: 4px;
@@ -170,12 +202,12 @@ table th {
     width: 100%;
     border: none;
     outline: none;
-    padding: 8px;
     box-sizing: border-box;
     font-size: inherit;
     font-weight: inherit;
     border: 1px solid #ddd;
     background-color: transparent;
+    color: #aaa; /* Color similar to placeholder text */
 }
 
 .schedule-details {

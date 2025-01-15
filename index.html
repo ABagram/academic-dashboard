@@ -18,18 +18,15 @@
     </div>
     <div class="program-overview">
         <h2>Program Overview</h2>
-        <label for="program-name">Program Name:</label>
-        <input type="text" id="program-name" placeholder="Enter your program name">
-        
-        <label for="program-code">Program Code:</label>
-        <input type="text" id="program-code" placeholder="Enter your program code">
-        
-        <label for="program-level">Program Level:</label>
-        <select id="program-level">
-            <option value="undergraduate">Undergraduate</option>
-            <option value="graduate">Graduate</option>
-            <option value="post-graduate">Post-Graduate</option>
-        </select>
+        <div class="program-card">
+            <div id="program-name" placeholder="Program Name"></div>
+            <div id="program-code" placeholder="Program Code"></div>
+            <select id="program-level">
+                <option value="undergraduate">Undergraduate</option>
+                <option value="graduate">Graduate</option>
+                <option value="post-graduate">Post-Graduate</option>
+            </select>
+        </div>
         
         <label for="program-type">Program Type:</label>
         <select id="program-type">
@@ -672,6 +669,31 @@
                 row.cells[0].textContent = index + 1;
             });
         }
+
+        document.querySelectorAll('#program-name, #program-code').forEach(div => {
+            div.addEventListener('dblclick', function() {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = div.textContent.trim();
+                input.placeholder = div.getAttribute('placeholder');
+                input.style.fontSize = window.getComputedStyle(div).fontSize;
+                input.style.fontWeight = window.getComputedStyle(div).fontWeight;
+                div.textContent = '';
+                div.appendChild(input);
+                input.focus();
+
+                input.addEventListener('blur', function() {
+                    div.textContent = input.value.trim() || input.placeholder;
+                    div.removeChild(input);
+                });
+
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        input.blur();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
