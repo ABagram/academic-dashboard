@@ -16,7 +16,8 @@ h1{
 
 body {
     height: 100%;
-    margin: 0;
+    width: 90%;
+    margin: auto;
     padding: 20px;
 }
 
@@ -32,6 +33,30 @@ button#add-course-btn {
     border-radius: 40px;
     background-color: #acff01;
     border: none;
+}
+
+.display-options, .program-overview{
+    border-radius: 15px;
+    margin: 10px 0;
+    background-color: white;
+    padding: 30px;
+}
+
+.display-option-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 40px;
+    background-color: #f2f2f2;
+    border: none;
+}
+
+.plus-icon {
+    margin-right: 10px;
+    font-size: 1.5em;
+    color: black;
 }
 
 table {
@@ -92,8 +117,8 @@ table th {
 }
 
 .course-card {
-    padding: 20px;
-    border-radius: 8px;
+    padding: 30px;
+    border-radius: 15px;
     width: 100%;
     box-sizing: border-box;
     background-color: #f4f4f4; /* Ensure background color is always set */

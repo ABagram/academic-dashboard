@@ -10,6 +10,65 @@
 <body>
     <div>
         <h1>Academic Dashboard</h1>
+        <div class="display-options">
+            <button class="display-option-btn" id="toggle-main-container-btn">
+                <span class="plus-icon">+</span> Current Semester Schedule
+            </button>
+        </div>
+    </div>
+    <div class="program-overview">
+        <h2>Program Overview</h2>
+        <label for="program-name">Program Name:</label>
+        <input type="text" id="program-name" placeholder="Enter your program name">
+        
+        <label for="program-code">Program Code:</label>
+        <input type="text" id="program-code" placeholder="Enter your program code">
+        
+        <label for="program-level">Program Level:</label>
+        <select id="program-level">
+            <option value="undergraduate">Undergraduate</option>
+            <option value="graduate">Graduate</option>
+            <option value="post-graduate">Post-Graduate</option>
+        </select>
+        
+        <label for="program-type">Program Type:</label>
+        <select id="program-type">
+            <option value="semestral">Semestral</option>
+            <option value="trimestral">Trimestral</option>
+            <option value="quarterly">Quarterly</option>
+        </select>
+        
+        <label for="total-terms">Total:</label>
+        <input type="number" id="total-terms" min="1" placeholder="Enter total number of semesters/terms">
+        
+        <label for="program-start-date">Program Start Date:</label>
+        <input type="month" id="program-start-date" placeholder="Enter start date">
+        
+        <div class="term-details">
+            <h3 id="term-details-header">Term Details</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th id="term-no-header">Term No.</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>GPA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="month" placeholder="Start Date"></td>
+                        <td><input type="month" placeholder="End Date"></td>
+                        <td><input type="number" step="0.01" placeholder="GPA"></td>
+                    </tr>
+                    <!-- Additional rows can be added dynamically -->
+                </tbody>
+            </table>
+            <button id="add-term-btn">Add Term</button>
+            <label for="cgpa">Cumulative GPA (CGPA):</label>
+            <input type="number" id="cgpa" step="0.01" placeholder="Enter CGPA">
+        </div>
     </div>
     <div class="course-input-container">
         <button id="add-course-btn">Add Course</button>
@@ -496,6 +555,123 @@
                 document.getElementById('device-select').innerHTML = data;
                 loadFromLocalStorage();
             });
+
+        document.getElementById('toggle-main-container-btn').addEventListener('click', function() {
+            const mainContainer = document.getElementById('main-container');
+            const icon = this.querySelector('.plus-icon');
+            if (mainContainer.style.display === 'none' || !mainContainer.style.display) {
+                mainContainer.style.display = 'block';
+                icon.textContent = '×';
+                icon.style.color = 'red';
+            } else {
+                mainContainer.style.display = 'none';
+                icon.textContent = '+';
+                icon.style.color = 'black';
+            }
+        });
+
+        // Ensure the main container is initially hidden
+        document.getElementById('main-container').style.display = 'none';
+
+        document.getElementById('program-type').addEventListener('change', function() {
+            const programType = this.value;
+            const termDetailsHeader = document.getElementById('term-details-header');
+            const termNoHeader = document.getElementById('term-no-header');
+            
+            if (programType === 'semestral') {
+                termDetailsHeader.textContent = 'Semester Details';
+                termNoHeader.textContent = 'Semester No.';
+            } else if (programType === 'trimestral') {
+                termDetailsHeader.textContent = 'Trimester Details';
+                termNoHeader.textContent = 'Trimester No.';
+            } else if (programType === 'quarterly') {
+                termDetailsHeader.textContent = 'Quarter Details';
+                termNoHeader.textContent = 'Quarter No.';
+            }
+        });
+
+        document.getElementById('add-term-btn').addEventListener('click', function() {
+            const tableBody = document.querySelector('.term-details tbody');
+            const newRow = document.createElement('tr');
+            const termCount = tableBody.rows.length + 1;
+            newRow.innerHTML = `
+                <td>${termCount}</td>
+                <td><input type="month" placeholder="Start Date"></td>
+                <td><input type="month" placeholder="End Date"></td>
+                <td><input type="number" step="0.01" placeholder="GPA"></td>
+            `;
+            tableBody.appendChild(newRow);
+            addContextMenuListener(newRow);
+        });
+
+        function addContextMenuListener(row) {
+            row.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                removeExistingInsertButton();
+                const insertBtn = document.createElement('button');
+                insertBtn.textContent = 'Insert Term';
+                insertBtn.className = 'insert-term-btn';
+                insertBtn.style.position = 'absolute';
+                insertBtn.style.top = `${event.clientY}px`;
+                insertBtn.style.left = `${event.clientX}px`;
+                document.body.appendChild(insertBtn);
+
+                const gapRow = document.createElement('tr');
+                gapRow.className = 'gap-row';
+                gapRow.innerHTML = `<td colspan="4" style="height: 20px; background-color: #f9f9f9;"></td>`;
+                row.parentNode.insertBefore(gapRow, row.nextSibling);
+
+                insertBtn.style.top = `${gapRow.getBoundingClientRect().top + window.scrollY}px`;
+                insertBtn.style.left = `${gapRow.getBoundingClientRect().left + window.scrollX}px`;
+
+                insertBtn.addEventListener('click', function() {
+                    const newRow = document.createElement('tr');
+                    const termCount = document.querySelector('.term-details tbody').rows.length;
+                    newRow.innerHTML = `
+                        <td>${termCount}</td>
+                        <td><input type="month" placeholder="Start Date"></td>
+                        <td><input type="month" placeholder="End Date"></td>
+                        <td><input type="number" step="0.01" placeholder="GPA"></td>
+                    `;
+                    row.parentNode.insertBefore(newRow, gapRow);
+                    updateTermNumbers();
+                    addContextMenuListener(newRow);
+                    document.body.removeChild(insertBtn);
+                    row.parentNode.removeChild(gapRow);
+                });
+
+                document.addEventListener('click', function() {
+                    if (document.body.contains(insertBtn)) {
+                        document.body.removeChild(insertBtn);
+                    }
+                    if (row.parentNode.contains(gapRow)) {
+                        row.parentNode.removeChild(gapRow);
+                    }
+                }, { once: true });
+            });
+        }
+
+        function removeExistingInsertButton() {
+            const existingBtn = document.querySelector('.insert-term-btn');
+            if (existingBtn) {
+                document.body.removeChild(existingBtn);
+            }
+            const existingGapRow = document.querySelector('.gap-row');
+            if (existingGapRow) {
+                existingGapRow.parentNode.removeChild(existingGapRow);
+            }
+        }
+
+        document.querySelectorAll('.term-details tbody tr').forEach(row => {
+            addContextMenuListener(row);
+        });
+
+        function updateTermNumbers() {
+            const rows = document.querySelectorAll('.term-details tbody tr');
+            rows.forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+            });
+        }
     </script>
 </body>
 </html>
