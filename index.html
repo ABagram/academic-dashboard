@@ -7,6 +7,7 @@
 </head>
 <body>
 <div class="course-input-container">
+    <button id="add-course-btn">Add Course</button>
     <table>
         <thead>
             <tr>
@@ -22,6 +23,83 @@
     </table>
 </div>
 <div class="canvas-container"></div>
-</body>
+<script>
+    document.getElementById('add-course-btn').addEventListener('click', function() {
+        const tableBody = document.querySelector('.course-input-container tbody');
+        const uniqueId = Date.now();
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" name="course-code" placeholder="Enter course code"></td>
+            <td><input type="text" name="course-title" placeholder="Enter course title"></td>
+            <td><input type="text" name="course-section" placeholder="Enter course section"></td>
+            <td>
+                <div class="days-checkboxes">
+                    <input type="checkbox" id="sunday-${uniqueId}" name="days" value="Sunday"><label for="sunday-${uniqueId}">Su</label>
+                    <input type="checkbox" id="monday-${uniqueId}" name="days" value="Monday"><label for="monday-${uniqueId}">M</label>
+                    <input type="checkbox" id="tuesday-${uniqueId}" name="days" value="Tuesday"><label for="tuesday-${uniqueId}">Tu</label>
+                    <input type="checkbox" id="wednesday-${uniqueId}" name="days" value="Wednesday"><label for="wednesday-${uniqueId}">W</label>
+                    <input type="checkbox" id="thursday-${uniqueId}" name="days" value="Thursday"><label for="thursday-${uniqueId}">Th</label>
+                    <input type="checkbox" id="friday-${uniqueId}" name="days" value="Friday"><label for="friday-${uniqueId}">F</label>
+                    <input type="checkbox" id="saturday-${uniqueId}" name="days" value="Saturday"><label for="saturday-${uniqueId}">Sa</label>
+                    
+                </div>
+                <div>
+                    <label><input type="checkbox" id="same-time-checkbox-${uniqueId}"> Same time for all days</label>
+                </div>
+                <table id="time-inputs-${uniqueId}">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </td>
+        `;
+        tableBody.appendChild(newRow);
+
+        const sameTimeCheckbox = newRow.querySelector(`#same-time-checkbox-${uniqueId}`);
+        const dayCheckboxes = newRow.querySelectorAll('input[name="days"]');
+        const timeInputsBody = newRow.querySelector(`#time-inputs-${uniqueId} tbody`);
+
+        function updateTimeInputs() {
+            if (sameTimeCheckbox.checked) {
+                timeInputsBody.innerHTML = '';
+                const selectedDays = Array.from(dayCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value).join(', ');
+                if (selectedDays) {
+                    timeInputsBody.innerHTML = `
+                        <tr>
+                            <td>${selectedDays}</td>
+                            <td><input type="time" name="start-time"></td>
+                            <td><input type="time" name="end-time"></td>
+                        </tr>
+                    `;
+                }
+            } else {
+                timeInputsBody.innerHTML = '';
+                dayCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const day = checkbox.value;
+                        timeInputsBody.innerHTML += `
+                            <tr>
+                                <td>${day}</td>
+                                <td><input type="time" name="${day.toLowerCase()}-start-time"></td>
+                                <td><input type="time" name="${day.toLowerCase()}-end-time"></td>
+                            </tr>
+                        `;
+                    }
+                });
+            }
+        }
+
+        sameTimeCheckbox.addEventListener('change', updateTimeInputs);
+        dayCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateTimeInputs);
+        });
+    });
+</script>
 <link rel="stylesheet" href="style.css">
+</body>
 </html>
