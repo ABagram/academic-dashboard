@@ -117,11 +117,29 @@ table th {
 }
 
 .course-card {
+    position: relative; /* Ensure positioning context for delete button */
     padding: 30px;
     border-radius: 15px;
     width: 100%;
     box-sizing: border-box;
     background-color: #f4f4f4; /* Ensure background color is always set */
+}
+
+.delete-course-btn {
+    position: absolute;
+    bottom: 30px; /* Align with course card padding */
+    right: 30px; /* Align with course card padding */
+    padding: 5px 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: none; /* Initially hidden */
+}
+
+.course-card:hover .delete-course-btn {
+    display: block; /* Show on hover */
 }
 
 .program-card {

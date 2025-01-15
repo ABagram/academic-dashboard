@@ -266,6 +266,7 @@
                             `).join('')}
                         </div>
                     </div>
+                    <button class="delete-course-btn">Delete</button>
                 `;
                 cardsContainer.appendChild(newCard);
 
@@ -365,6 +366,20 @@
                     });
                 });
 
+                // Add right-click event to show delete button
+                newCard.addEventListener('contextmenu', function(event) {
+                    event.preventDefault();
+                    const deleteBtn = newCard.querySelector('.delete-course-btn');
+                    deleteBtn.style.display = 'block';
+                });
+
+                // Add click event to delete button
+                newCard.querySelector('.delete-course-btn').addEventListener('click', function() {
+                    cardsContainer.removeChild(newCard);
+                    updateCalendar();
+                    saveToLocalStorage();
+                });
+
                 updateCalendar();
             });
         }
@@ -398,6 +413,7 @@
                     </div>
                     <div id="time-inputs-${uniqueId}" class="time-inputs"></div>
                 </div>
+                <button class="delete-course-btn">Delete</button>
             `;
             cardsContainer.appendChild(newCard);
 
@@ -495,6 +511,20 @@
                         }
                     });
                 });
+            });
+
+            // Add right-click event to show delete button
+            newCard.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                const deleteBtn = newCard.querySelector('.delete-course-btn');
+                deleteBtn.style.display = 'block';
+            });
+
+            // Add click event to delete button
+            newCard.querySelector('.delete-course-btn').addEventListener('click', function() {
+                cardsContainer.removeChild(newCard);
+                updateCalendar();
+                saveToLocalStorage();
             });
 
             updateCalendar();
