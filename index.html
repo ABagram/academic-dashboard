@@ -3,73 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule Constructor</title>
+    <title>Academic Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div>
         <h1>Academic Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="#home" class="tab-link" data-tab="home">Home</a></li>
+                <li><a href="#program-flowchart" class="tab-link" data-tab="program-overview">Program Overview</a></li>
+                <li><a href="#program-flowchart" class="tab-link" data-tab="program-flowchart">Program Flowchart</a></li>
+                <li><a href="#study-room" class="tab-link" data-tab="study-room">Study Room</a></li>
+                <li><a href="#focus" class="tab-link" data-tab="focus">Focus</a></li>
+            </ul>
+        </nav>
+        <div class="tab-content" id="home">
+            <div id="current-time-date">
+                <span id="current-time"></span>
+                <div id="date-day-container">
+                    <span id="current-date"></span>
+                    <span id="current-day"></span> <!-- Add a new span for the day of the week -->
+                </div>
+            </div>
+            <h2>Schedule</h2>
+            <!-- Add current week panel -->
+            <div id="current-week-panel">
+                <h3>Current Week</h3>
+                <table id="week-table">
+                    <thead>
+                        <tr>
+                            <th>Week No.</th>
+                            <th>Start</th>
+                            <th>End</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><input type="date" class="week-start"></td>
+                            <td><input type="date" class="week-end"></td>
+                        </tr>
+                        <!-- Additional rows can be added dynamically -->
+                    </tbody>
+                </table>
+                <button id="add-week-btn">Add Week</button>
+            </div>
+            <div id="current-week-number">
+                <h3>Current Week Number: <span id="week-number">N/A</span></h3>
+            </div>
+            <!-- Add new table for course requirements -->
+            <h2>Course Requirements</h2>
+            <table id="requirements-table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Course Code</th>
+                        <th>Requirement</th>
+                        <th>Description</th>
+                        <th>Due Date</th>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>Due Time</th>
+                        <th>Time Left</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows can be added dynamically -->
+                </tbody>
+            </table>
+            <button id="add-requirement-btn">Add Requirement</button> <!-- Button to add new rows -->
+        </div>
+        <div class="tab-content" id="program-flowchart">
+            <div class="program-card">
+                <div id="program-name" placeholder="Program Name"></div>
+                <div id="program-code" placeholder="Program Code"></div>
+                <select id="program-level">
+                    <option value="undergraduate">Undergraduate</option>
+                    <option value="graduate">Graduate</option>
+                    <option value="post-graduate">Post-Graduate</option>
+                </select>
+            </div>
+            <!-- Move program overview content here -->
+            <h2>Program Overview</h2>
+            <label for="program-type">Program Type:</label>
+            <select id="program-type">
+                <option value="semestral">Semestral</option>
+                <option value="trimestral">Trimestral</option>
+                <option value="quarterly">Quarterly</option>
+            </select>
+            
+            <label for="total-terms">Total:</label>
+            <input type="number" id="total-terms" min="1" placeholder="Enter total number of semesters/terms">
+            
+            <label for="program-start-date">Program Start Date:</label>
+            <input type="month" id="program-start-date" placeholder="Enter start date">
+            
+            <div class="term-details">
+                <h3 id="term-details-header">Term Details</h3>
+                <button id="edit-term-columns-btn">Edit Columns</button>
+                <div id="term-columns-checklist" style="display: none;">
+                    <label><input type="checkbox" value="start-date" checked> Start Date</label>
+                    <label><input type="checkbox" value="end-date" checked> End Date</label>
+                    <label><input type="checkbox" value="units" checked> No. of Units</label>
+                    <label><input type="checkbox" value="gpa" checked> GPA</label>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th id="term-no-header">Term No.</th>
+                            <th class="start-date">Start Date</th>
+                            <th class="end-date">End Date</th>
+                            <th class="units">No. of Units</th>
+                            <th class="gpa">GPA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td class="start-date"><input type="month" placeholder="Start Date"></td>
+                            <td class="end-date"><input type="month" placeholder="End Date"></td>
+                            <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
+                            <td class="gpa"><input type="number" step="0.01" placeholder="GPA"></td>
+                        </tr>
+                        <!-- Additional rows can be added dynamically -->
+                    </tbody>
+                </table>
+                <button id="add-term-btn">Add Term</button>
+                <label for="cgpa">Cumulative GPA (CGPA):</label>
+                <input type="number" id="cgpa" step="0.01" placeholder="Enter CGPA">
+            </div>
+            <div id="course-tables-container">
+                <!-- Course tables will be dynamically added here -->
+            </div>
+        </div>
+        <div class="tab-content" id="study-room">
+            <!-- Study Room content goes here -->
+        </div>
+        <div class="tab-content" id="focus">
+            <h2>Pomodoro Timer</h2>
+            <div id="pomodoro-timer">
+                <span id="timer">25:00</span>
+                <button id="start-timer-btn">Start</button>
+                <button id="reset-timer-btn">Reset</button>
+            </div>
+            <h3>Blocked Sites</h3>
+            <label for="blocked-sites">Enter sites to block (comma-separated):</label>
+            <input type="text" id="blocked-sites" placeholder="e.g., facebook.com, youtube.com">
+            <button id="block-sites-btn">Block Sites</button>
+        </div>
         <div class="display-options">
             <button class="display-option-btn" id="toggle-main-container-btn">
                 <span class="plus-icon">+</span> Current Semester Schedule
             </button>
         </div>
     </div>
-    <div class="program-overview">
-        <h2>Program Overview</h2>
-        <div class="program-card">
-            <div id="program-name" placeholder="Program Name"></div>
-            <div id="program-code" placeholder="Program Code"></div>
-            <select id="program-level">
-                <option value="undergraduate">Undergraduate</option>
-                <option value="graduate">Graduate</option>
-                <option value="post-graduate">Post-Graduate</option>
-            </select>
-        </div>
-        
-        <label for="program-type">Program Type:</label>
-        <select id="program-type">
-            <option value="semestral">Semestral</option>
-            <option value="trimestral">Trimestral</option>
-            <option value="quarterly">Quarterly</option>
-        </select>
-        
-        <label for="total-terms">Total:</label>
-        <input type="number" id="total-terms" min="1" placeholder="Enter total number of semesters/terms">
-        
-        <label for="program-start-date">Program Start Date:</label>
-        <input type="month" id="program-start-date" placeholder="Enter start date">
-        
-        <div class="term-details">
-            <h3 id="term-details-header">Term Details</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th id="term-no-header">Term No.</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>GPA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td><input type="month" placeholder="Start Date"></td>
-                        <td><input type="month" placeholder="End Date"></td>
-                        <td><input type="number" step="0.01" placeholder="GPA"></td>
-                    </tr>
-                    <!-- Additional rows can be added dynamically -->
-                </tbody>
-            </table>
-            <button id="add-term-btn">Add Term</button>
-            <label for="cgpa">Cumulative GPA (CGPA):</label>
-            <input type="number" id="cgpa" step="0.01" placeholder="Enter CGPA">
-        </div>
-    </div>
     <div class="course-input-container">
         <button id="add-course-btn">Add Course</button>
-        <div id="course-cards-container"></div>
+        <button id="toggle-view-btn">Table View</button>
+        <div id="course-cards-container">
+            <!-- Example course card structure -->
+            <div class="course-card">
+                <div class="course-details">
+                    <div class="course-code-section">
+                        <div class="editable course-code" data-placeholder="Enter course code"></div>
+                        <div class="editable course-section" data-placeholder="Enter course section"></div>
+                    </div>
+                    <div class="editable" data-placeholder="Enter course title"></div>
+                    <div class="editable" data-placeholder="Enter location"></div>
+                    <div class="editable" data-placeholder="Enter grade"></div>
+                    <div class="editable" data-placeholder="Enter unit"></div>
+                </div>
+                <div class="schedule-details">
+                    <div class="days-checkboxes">
+                        <input type="checkbox" id="sunday-example" name="days" value="Sunday"><label for="sunday-example">Su</label>
+                        <input type="checkbox" id="monday-example" name="days" value="Monday"><label for="monday-example">M</label>
+                        <input type="checkbox" id="tuesday-example" name="days" value="Tuesday"><label for="tuesday-example">Tu</label>
+                        <input type="checkbox" id="wednesday-example" name="days" value="Wednesday"><label for="wednesday-example">W</label>
+                        <input type="checkbox" id="thursday-example" name="days" value="Thursday"><label for="thursday-example">Th</label>
+                        <input type="checkbox" id="friday-example" name="days" value="Friday"><label for="friday-example">F</label>
+                        <input type="checkbox" id="saturday-example" name="days" value="Saturday"><label for="saturday-example">Sa</label>
+                    </div>
+                    <div>
+                        <label><input type="checkbox" id="same-time-checkbox-example"> Same time for all days</label>
+                    </div>
+                    <div id="time-inputs-example" class="time-inputs"></div>
+                </div>
+                <button class="delete-course-btn">Delete</button>
+            </div>
+        </div>
+        <div id="course-table-container">
+            <!-- Course table will be dynamically added here -->
+        </div>
     </div>
     <div class="canvas-container"></div>
     <div class="calendar-size-inputs">
@@ -84,6 +210,13 @@
     <div id="main-container">
         <div id="course-cards-container"></div>
         <div id="calendar-container"></div>
+    </div>
+    <div id="table">
+        <!-- Dynamically generated main-container divs will be appended here -->
+    </div>
+    <div id="timezone-selector" style="display: none; position: absolute; background: white; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+        <label for="timezone">Select Timezone:</label>
+        <select id="timezone"></select> <!-- Timezone options will be loaded dynamically -->
     </div>
     <script>
         function updateCalendar() {
@@ -371,6 +504,13 @@
                     event.preventDefault();
                     const deleteBtn = newCard.querySelector('.delete-course-btn');
                     deleteBtn.style.display = 'block';
+
+                    document.addEventListener('click', function hideDeleteButton(e) {
+                        if (!newCard.contains(e.target)) {
+                            deleteBtn.style.display = 'none';
+                            document.removeEventListener('click', hideDeleteButton);
+                        }
+                    });
                 });
 
                 // Add click event to delete button
@@ -383,6 +523,45 @@
                 updateCalendar();
             });
         }
+
+        function saveProgramDetailsToLocalStorage() {
+            const programName = document.getElementById('program-name').textContent.trim() || '';
+            const programCode = document.getElementById('program-code').textContent.trim() || '';
+            const programType = document.getElementById('program-type').value || '';
+            const totalTerms = document.getElementById('total-terms').value || '';
+            const programStartDate = document.getElementById('program-start-date').value || '';
+
+            localStorage.setItem('programName', programName);
+            localStorage.setItem('programCode', programCode);
+            localStorage.setItem('programType', programType);
+            localStorage.setItem('totalTerms', totalTerms);
+            localStorage.setItem('programStartDate', programStartDate);
+        }
+
+        function loadProgramDetailsFromLocalStorage() {
+            const programName = localStorage.getItem('programName') || '';
+            const programCode = localStorage.getItem('programCode') || '';
+            const programType = localStorage.getItem('programType') || 'semestral';
+            const totalTerms = localStorage.getItem('totalTerms') || '';
+            const programStartDate = localStorage.getItem('programStartDate') || '';
+
+            document.getElementById('program-name').textContent = programName;
+            document.getElementById('program-code').textContent = programCode;
+            document.getElementById('program-type').value = programType;
+            document.getElementById('total-terms').value = totalTerms;
+            document.getElementById('program-start-date').value = programStartDate;
+        }
+
+        document.getElementById('program-name').addEventListener('blur', saveProgramDetailsToLocalStorage);
+        document.getElementById('program-code').addEventListener('blur', saveProgramDetailsToLocalStorage);
+        document.getElementById('program-type').addEventListener('change', saveProgramDetailsToLocalStorage);
+        document.getElementById('total-terms').addEventListener('input', saveProgramDetailsToLocalStorage);
+        document.getElementById('program-start-date').addEventListener('input', saveProgramDetailsToLocalStorage);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgramDetailsFromLocalStorage();
+            loadFromLocalStorage();
+        });
 
         document.getElementById('add-course-btn').addEventListener('click', function() {
             const cardsContainer = document.getElementById('course-cards-container');
@@ -397,6 +576,8 @@
                     </div>
                     <div class="editable" data-placeholder="Enter course title"></div>
                     <div class="editable" data-placeholder="Enter location"></div>
+                    <div class="editable" data-placeholder="Enter grade"></div>
+                    <div class="editable" data-placeholder="Enter unit"></div>
                 </div>
                 <div class="schedule-details">
                     <div class="days-checkboxes">
@@ -518,6 +699,13 @@
                 event.preventDefault();
                 const deleteBtn = newCard.querySelector('.delete-course-btn');
                 deleteBtn.style.display = 'block';
+
+                document.addEventListener('click', function hideDeleteButton(e) {
+                    if (!newCard.contains(e.target)) {
+                        deleteBtn.style.display = 'none';
+                        document.removeEventListener('click', hideDeleteButton);
+                    }
+                });
             });
 
             // Add click event to delete button
@@ -623,12 +811,148 @@
             const termCount = tableBody.rows.length + 1;
             newRow.innerHTML = `
                 <td>${termCount}</td>
-                <td><input type="month" placeholder="Start Date"></td>
-                <td><input type="month" placeholder="End Date"></td>
-                <td><input type="number" step="0.01" placeholder="GPA"></td>
+                <td class="start-date"><input type="month" placeholder="Start Date"></td>
+                <td class="end-date"><input type="month" placeholder="End Date"></td>
+                <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
+                <td class="gpa"><input type="number" step="0.01" placeholder="GPA"></td>
             `;
             tableBody.appendChild(newRow);
             addContextMenuListener(newRow);
+            const programType = document.getElementById('program-type').value;
+            addRow(programType, termCount);
+            addCourseTable(termCount);
+            applyColumnVisibility();
+        });
+
+        // Add Course Table functionality
+        function addCourseTable(termNumber) {
+            const courseTablesContainer = document.getElementById('course-tables-container');
+            const courseTable = document.createElement('div');
+            courseTable.className = `course-table term-${termNumber}`;
+            courseTable.innerHTML = `
+                <h3>Term ${termNumber} Courses</h3>
+                <button class="edit-course-columns-btn">Edit Columns</button>
+                <div class="course-columns-checklist" style="display: none;">
+                    <label><input type="checkbox" value="term-taken" checked>Term Taken</label>
+                    <label><input type="checkbox" value="course-code" checked> Course Code</label>
+                    <label><input type="checkbox" value="course-title" checked> Course Title</label>
+                    <label><input type="checkbox" value="units" checked>Units</label>
+                    <label><input type="checkbox" value="pre-requisites" checked> Pre-requisites</label>
+                    <label><input type="checkbox" value="type-of-prereq" checked> Type</label>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="term-taken">Term Taken</th>
+                            <th class="course-code">Course Code</th>
+                            <th class="course-title">Course Title</th>
+                            <th class="course-section">Course Section</th>
+                            <th class="professor">Professor</th>
+                            <th class="units">Units</th>
+                            <th class="grade">Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="course-code"><input type="text" placeholder="Term Taken"></td>
+                            <td class="course-code"><input type="text" placeholder="Course Code"></td>
+                            <td class="course-title"><input type="text" placeholder="Course Title"></td>
+                            <td class="course-section"><input type="text" placeholder="Course Section"></td>
+                            <td class="professor"><input type="text" placeholder="Professor"></td>
+                            <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
+                            <td class="grade"><input type="number" step="0.01" placeholder="Grade"></td>
+                        </tr>
+                        <!-- Additional rows can be added dynamically -->
+                    </tbody>
+                </table>
+                <button class="add-course-btn">Add Course</button>
+            `;
+            courseTablesContainer.appendChild(courseTable);
+
+            const editCourseColumnsBtn = courseTable.querySelector('.edit-course-columns-btn');
+            const courseColumnsChecklist = courseTable.querySelector('.course-columns-checklist');
+
+            editCourseColumnsBtn.addEventListener('click', () => {
+                courseColumnsChecklist.style.display = courseColumnsChecklist.style.display === 'none' ? 'block' : 'none';
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!editCourseColumnsBtn.contains(event.target) && !courseColumnsChecklist.contains(event.target)) {
+                    courseColumnsChecklist.style.display = 'none';
+                }
+            });
+
+            courseColumnsChecklist.addEventListener('change', (event) => {
+                const columnClass = event.target.value;
+                const isChecked = event.target.checked;
+                document.querySelectorAll(`.${columnClass}`).forEach(cell => {
+                    cell.style.display = isChecked ? '' : 'none';
+                });
+            });
+
+            const addCourseBtn = courseTable.querySelector('.add-course-btn');
+            addCourseBtn.addEventListener('click', () => {
+                const tbody = courseTable.querySelector('tbody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="course-code"><input type="text" placeholder="Course Code"></td>
+                    <td class="course-title"><input type="text" placeholder="Course Title"></td>
+                    <td class="course-section"><input type="text" placeholder="Course Section"></td>
+                    <td class="professor"><input type="text" placeholder="Professor"></td>
+                    <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
+                    <td class="grade"><input type="number" step="0.01" placeholder="Grade"></td>
+                `;
+                tbody.appendChild(newRow);
+                applyColumnVisibility();
+            });
+        }
+
+        function applyColumnVisibility() {
+            const termColumnsChecklist = document.getElementById('term-columns-checklist');
+            const courseColumnsChecklists = document.querySelectorAll('.course-columns-checklist');
+
+            termColumnsChecklist.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                const columnClass = checkbox.value;
+                const isChecked = checkbox.checked;
+                document.querySelectorAll(`.${columnClass}`).forEach(cell => {
+                    cell.style.display = isChecked ? '' : 'none';
+                });
+            });
+
+            courseColumnsChecklists.forEach(checklist => {
+                checklist.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    const columnClass = checkbox.value;
+                    const isChecked = checkbox.checked;
+                    document.querySelectorAll(`.${columnClass}`).forEach(cell => {
+                        cell.style.display = isChecked ? '' : 'none';
+                    });
+                });
+            });
+        }
+
+        document.getElementById('edit-term-columns-btn').addEventListener('click', () => {
+            const termColumnsChecklist = document.getElementById('term-columns-checklist');
+            termColumnsChecklist.style.display = termColumnsChecklist.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.addEventListener('click', (event) => {
+            const termColumnsChecklist = document.getElementById('term-columns-checklist');
+            const editTermColumnsBtn = document.getElementById('edit-term-columns-btn');
+            if (!editTermColumnsBtn.contains(event.target) && !termColumnsChecklist.contains(event.target)) {
+                termColumnsChecklist.style.display = 'none';
+            }
+        });
+
+        document.getElementById('term-columns-checklist').addEventListener('change', applyColumnVisibility);
+
+        // Ensure course tables are created for existing terms on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const termRows = document.querySelectorAll('.term-details tbody tr');
+            termRows.forEach((row, index) => {
+                const termNumber = index + 1;
+                addCourseTable(termNumber);
+            });
+            applyColumnVisibility();
         });
 
         function addContextMenuListener(row) {
@@ -723,6 +1047,405 @@
                     }
                 });
             });
+        });
+
+        document.querySelectorAll('.course-card').forEach(card => {
+            card.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                const deleteBtn = card.querySelector('.delete-course-btn');
+                deleteBtn.style.display = 'block';
+
+                document.addEventListener('click', function hideDeleteButton(e) {
+                    if (!card.contains(e.target)) {
+                        deleteBtn.style.display = 'none';
+                        document.removeEventListener('click', hideDeleteButton);
+                    }
+                });
+            });
+        });
+
+        function makeCourseCardEditable(card) {
+            card.querySelectorAll('.editable').forEach(div => {
+                div.addEventListener('dblclick', function() {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = div.textContent.trim();
+                    input.placeholder = div.getAttribute('data-placeholder');
+                    input.style.fontSize = window.getComputedStyle(div).fontSize;
+                    input.style.fontWeight = window.getComputedStyle(div).fontWeight;
+                    div.textContent = '';
+                    div.appendChild(input);
+                    input.focus();
+
+                    input.addEventListener('blur', function() {
+                        div.textContent = input.value.trim() || input.placeholder;
+                        div.removeChild(input);
+                    });
+
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            input.blur();
+                        }
+                    });
+                });
+            });
+
+            card.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                const deleteBtn = card.querySelector('.delete-course-btn');
+                deleteBtn.style.display = 'block';
+
+                document.addEventListener('click', function hideDeleteButton(e) {
+                    if (!card.contains(e.target)) {
+                        deleteBtn.style.display = 'none';
+                        document.removeEventListener('click', hideDeleteButton);
+                    }
+                });
+            });
+
+            card.querySelector('.delete-course-btn').addEventListener('click', function() {
+                card.parentNode.removeChild(card);
+                updateCalendar();
+                saveToLocalStorage();
+            });
+        }
+
+        document.querySelectorAll('.course-card').forEach(card => {
+            makeCourseCardEditable(card);
+        });
+
+        document.getElementById('add-course-btn').addEventListener('click', function() {
+            const cardsContainer = document.getElementById('course-cards-container');
+            const uniqueId = Date.now();
+            const newCard = document.createElement('div');
+            newCard.className = 'course-card';
+            newCard.innerHTML = `
+                <div class="course-details">
+                    <div class="course-code-section">
+                        <div class="editable course-code" data-placeholder="Enter course code"></div>
+                        <div class="editable course-section" data-placeholder="Enter course section"></div>
+                    </div>
+                    <div class="editable" data-placeholder="Enter course title"></div>
+                    <div class="editable" data-placeholder="Enter location"></div>
+                    <div class="editable" data-placeholder="Enter grade"></div>
+                    <div class="editable" data-placeholder="Enter unit"></div>
+                </div>
+                <div class="schedule-details">
+                    <div class="days-checkboxes">
+                        <input type="checkbox" id="sunday-${uniqueId}" name="days" value="Sunday"><label for="sunday-${uniqueId}">Su</label>
+                        <input type="checkbox" id="monday-${uniqueId}" name="days" value="Monday"><label for="monday-${uniqueId}">M</label>
+                        <input type="checkbox" id="tuesday-${uniqueId}" name="days" value="Tuesday"><label for="tuesday-${uniqueId}">Tu</label>
+                        <input type="checkbox" id="wednesday-${uniqueId}" name="days" value="Wednesday"><label for="wednesday-${uniqueId}">W</label>
+                        <input type="checkbox" id="thursday-${uniqueId}" name="days" value="Thursday"><label for="thursday-${uniqueId}">Th</label>
+                        <input type="checkbox" id="friday-${uniqueId}" name="days" value="Friday"><label for="friday-${uniqueId}">F</label>
+                        <input type="checkbox" id="saturday-${uniqueId}" name="days" value="Saturday"><label for="saturday-${uniqueId}">Sa</label>
+                    </div>
+                    <div>
+                        <label><input type="checkbox" id="same-time-checkbox-${uniqueId}"> Same time for all days</label>
+                    </div>
+                    <div id="time-inputs-${uniqueId}" class="time-inputs"></div>
+                </div>
+                <button class="delete-course-btn">Delete</button>
+            `;
+            cardsContainer.appendChild(newCard);
+            makeCourseCardEditable(newCard);
+            updateCalendar();
+            saveToLocalStorage();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabLinks = document.querySelectorAll('.tab-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function showTab(tabId) {
+                tabContents.forEach(content => {
+                    content.style.display = content.id === tabId ? 'block' : 'none';
+                });
+                tabLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('data-tab') === tabId);
+                });
+            }
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    showTab(tabId);
+                });
+            });
+
+            // Show the first tab by default
+            showTab('home');
+        });
+
+        let currentTimezone = 'UTC';
+
+        function updateTimeAndDate() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'short', day: 'numeric', timeZone: currentTimezone };
+            const dayOptions = { weekday: 'short', timeZone: currentTimezone };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: currentTimezone };
+            document.getElementById('current-time').textContent = now.toLocaleTimeString(undefined, timeOptions);
+            document.getElementById('current-date').textContent = now.toLocaleDateString(undefined, options);
+            document.getElementById('current-day').textContent = now.toLocaleDateString(undefined, dayOptions);
+            updateCurrentWeekNumber(now);
+            updateTimeLeft();
+        }
+
+        function updateCurrentWeekNumber(currentDate) {
+            const weekTableBody = document.querySelector('#week-table tbody');
+            const weekRows = weekTableBody.querySelectorAll('tr');
+            let currentWeekNumber = 'Break';
+
+            weekRows.forEach(row => {
+                const weekNo = row.cells[0].textContent.trim();
+                const startDate = new Date(row.querySelector('.week-start').value);
+                const endDate = new Date(row.querySelector('.week-end').value);
+
+                if (currentDate >= startDate && currentDate <= endDate) {
+                    currentWeekNumber = weekNo;
+                }
+            });
+
+            document.getElementById('week-number').textContent = currentWeekNumber;
+        }
+
+        function updateTimeLeft() {
+            const now = new Date();
+            const requirementsTableBody = document.querySelector('#requirements-table tbody');
+            const requirementRows = requirementsTableBody.querySelectorAll('tr');
+
+            requirementRows.forEach(row => {
+                const dueDateInput = row.querySelector('.due-date');
+                const dueTimeInput = row.querySelector('input[placeholder="Due Time"]');
+                const timeLeftCell = row.querySelector('.time-left');
+                const statusSelect = row.querySelector('select');
+
+                if (dueDateInput && dueTimeInput && timeLeftCell && statusSelect) {
+                    const dueDate = new Date(dueDateInput.value);
+                    const dueTime = dueTimeInput.value;
+                    let timeLeftText = '';
+
+                    if (statusSelect.value === 'In-Progress') {
+                        if (!dueDateInput.value) {
+                            timeLeftText = '';
+                        } else {
+                            const [dueHours, dueMinutes] = dueTime.split(':').map(Number);
+                            const dueDateTime = new Date(dueDate);
+                            dueDateTime.setHours(dueHours, dueMinutes);
+
+                            if (dueDateTime < now) {
+                                timeLeftText = 'OVERDUE';
+                            } else if (dueDate.toDateString() === now.toDateString()) {
+                                const diffMs = dueDateTime - now;
+                                if (diffMs <= 0) {
+                                    timeLeftText = 'OVERDUE';
+                                } else {
+                                    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                                    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                                    timeLeftText = `${diffHrs} h ${diffMins} min`;
+                                }
+                            } else {
+                                const diffDays = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+                                timeLeftText = `${diffDays} days`;
+                            }
+                        }
+                    }
+
+                    timeLeftCell.textContent = timeLeftText;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTimeAndDate();
+            setInterval(updateTimeAndDate, 1000);
+
+            const tabLinks = document.querySelectorAll('.tab-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function showTab(tabId) {
+                tabContents.forEach(content => {
+                    content.style.display = content.id === tabId ? 'block' : 'none';
+                });
+            }
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    showTab(tabId);
+                });
+            });
+
+            // Show the first tab by default
+            showTab('home');
+
+            const currentTimeDateDiv = document.getElementById('current-time-date');
+            const timezoneSelector = document.getElementById('timezone-selector');
+
+            currentTimeDateDiv.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                timezoneSelector.style.display = 'block';
+                timezoneSelector.style.top = `${event.clientY}px`;
+                timezoneSelector.style.left = `${event.clientX}px`;
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!timezoneSelector.contains(event.target) && event.target !== currentTimeDateDiv) {
+                    timezoneSelector.style.display = 'none';
+                }
+            });
+
+            document.getElementById('timezone').addEventListener('change', function() {
+                currentTimezone = this.value;
+                updateTimeAndDate();
+                timezoneSelector.style.display = 'none';
+            });
+
+            // Load timezone options from external file
+            fetch('timezone-options.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('timezone').innerHTML = data;
+                });
+        });
+
+        // Pomodoro Timer functionality
+        let timerInterval;
+        const timerDisplay = document.getElementById('timer');
+        const startTimerBtn = document.getElementById('start-timer-btn');
+        const resetTimerBtn = document.getElementById('reset-timer-btn');
+        let timerDuration = 25 * 60; // 25 minutes in seconds
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerDuration / 60);
+            const seconds = timerDuration % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                if (timerDuration > 0) {
+                    timerDuration--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    alert('Time is up!');
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerDuration = 25 * 60;
+            updateTimerDisplay();
+        }
+
+        startTimerBtn.addEventListener('click', startTimer);
+        resetTimerBtn.addEventListener('click', resetTimer);
+
+        // Block Sites functionality
+        const blockSitesBtn = document.getElementById('block-sites-btn');
+        const blockedSitesInput = document.getElementById('blocked-sites');
+
+        blockSitesBtn.addEventListener('click', () => {
+            const blockedSites = blockedSitesInput.value.split(',').map(site => site.trim());
+            blockedSites.forEach(site => {
+                if (site) {
+                    const regex = new RegExp(`^https?://(www\\.)?${site.replace('.', '\\.')}`);
+                    chrome.tabs.query({}, tabs => {
+                        tabs.forEach(tab => {
+                            if (regex.test(tab.url)) {
+                                chrome.tabs.remove(tab.id);
+                            }
+                        });
+                    });
+                }
+            });
+        });
+
+        // Term Columns Edit functionality
+        const editTermColumnsBtn = document.getElementById('edit-term-columns-btn');
+        const termColumnsChecklist = document.getElementById('term-columns-checklist');
+
+        editTermColumnsBtn.addEventListener('click', () => {
+            termColumnsChecklist.style.display = termColumnsChecklist.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!editTermColumnsBtn.contains(event.target) && !termColumnsChecklist.contains(event.target)) {
+                termColumnsChecklist.style.display = 'none';
+            }
+        });
+
+        termColumnsChecklist.addEventListener('change', (event) => {
+            const columnClass = event.target.value;
+            const isChecked = event.target.checked;
+            document.querySelectorAll(`.${columnClass}`).forEach(cell => {
+                cell.style.display = isChecked ? '' : 'none';
+            });
+        });
+
+        // Ensure course tables are created for existing terms on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const termRows = document.querySelectorAll('.term-details tbody tr');
+            termRows.forEach((row, index) => {
+                const termNumber = index + 1;
+                addCourseTable(termNumber);
+            });
+            applyColumnVisibility();
+        });
+
+        // Add Week functionality
+        document.getElementById('add-week-btn').addEventListener('click', function() {
+            const weekTableBody = document.querySelector('#week-table tbody');
+            const newRow = document.createElement('tr');
+            const weekCount = weekTableBody.rows.length + 1;
+            newRow.innerHTML = `
+                <td>${weekCount}</td>
+                <td><input type="date" class="week-start"></td>
+                <td><input type="date" class="week-end"></td>
+            `;
+            weekTableBody.appendChild(newRow);
+        });
+
+        // Add Requirement functionality
+        document.getElementById('add-requirement-btn').addEventListener('click', function() {
+            const requirementsTableBody = document.querySelector('#requirements-table tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    <select>
+                        <option value="In-Progress">In-Progress</option>
+                        <option value="Done">Done</option>
+                    </select>
+                </td>
+                <td><input type="text" placeholder="Course Code"></td>
+                <td><input type="text" placeholder="Requirement"></td>
+                <td><input type="text" placeholder="Description"></td>
+                <td><input type="date" class="due-date" placeholder="Due Date"></td>
+                <td class="day"></td>
+                <td><input type="time" placeholder="Start Time"></td>
+                <td><input type="time" placeholder="Due Time"></td>
+                <td class="time-left"></td>
+            `;
+            requirementsTableBody.appendChild(newRow);
+
+            // Add event listener to update the "Day" column based on the "Due Date" input
+            newRow.querySelector('.due-date').addEventListener('input', function() {
+                const dueDate = new Date(this.value);
+                const dayCell = newRow.querySelector('.day');
+                const options = { weekday: 'short' };
+                dayCell.textContent = dueDate.toLocaleDateString(undefined, options);
+            });
+
+            // Add event listener to update the "Time Left" column based on the "Due Date" and "Due Time" inputs
+            newRow.querySelector('.due-date').addEventListener('input', updateTimeLeft);
+            newRow.querySelector('input[placeholder="Due Time"]').addEventListener('input', updateTimeLeft);
         });
     </script>
 </body>

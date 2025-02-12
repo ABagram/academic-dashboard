@@ -1,6 +1,6 @@
 html {
     height: 100%;
-    background-color: #0039c8;
+    background-color: white;
 }
 
 * {
@@ -10,13 +10,13 @@ html {
 h1{
     font-size: 5em;
     font-weight: bold;
-    color: white;
+    color: #0039c8;
     text-align: center; /* Center the h1 element */
 }
 
 body {
     height: 100%;
-    width: 90%;
+    width: 80%;
     margin: auto;
     padding: 20px;
 }
@@ -136,10 +136,6 @@ table th {
     border-radius: 4px;
     cursor: pointer;
     display: none; /* Initially hidden */
-}
-
-.course-card:hover .delete-course-btn {
-    display: block; /* Show on hover */
 }
 
 .program-card {
@@ -327,4 +323,117 @@ table th {
 
 .calendar-course .end-time {
     text-align: right;
+}
+
+/* Example CSS rules for dynamically generated main-container divs */
+.semester-1, .trimester-1, .quarter-1 {
+    /* Add your styles here */
+}
+
+.semester-2, .trimester-2, .quarter-2 {
+    /* Add your styles here */
+}
+
+.term-details tbody tr {
+    cursor: pointer;
+}
+
+.main-container {
+    display: none; /* Initially hidden */
+}
+
+#course-table-container {
+    display: none; /* Initially hidden */
+    width: 100%;
+    overflow-x: auto;
+}
+
+#course-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#course-table-container th, #course-table-container td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#course-table-container th {
+    background-color: #f2f2f2;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    border: solid 2px #0039c8;
+    border-radius: 2em;
+    margin-bottom: 20px;
+    width: fit-content;
+    padding-inline-start: 0%;
+}
+
+nav ul li {
+    margin: 0 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    padding: 10px 20px;
+    display: block;
+    color: #0039c8;
+    font-weight: bold;
+}
+
+nav ul li a:hover, nav ul li a.active {
+    color: #f2f2f2;
+    border-radius: 5px;
+}
+
+.tab-content {
+    display: none;
+}
+
+#current-time-date {
+    text-align: center;
+    padding: 30px;
+    max-width: fit-content;
+    border-radius: 15px;
+    color: black;
+    display: flex;
+    flex-direction: column; /* Ensure spans are on separate lines */
+    align-items: center; /* Center align the items */
+    background-color: #acff01;
+}
+
+#date-day-container {
+    display: flex;
+    align-items: center;
+}
+
+#current-time {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#current-date {
+    font-size: 1em;
+    margin-right: 30px; /* Add space between date and day */
+}
+
+#current-day {
+    font-size: 1em;
+    display: inline;
+}
+
+#timezone-selector {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1000; /* Ensure it appears above other elements */
 }
