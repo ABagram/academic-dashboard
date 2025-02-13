@@ -437,3 +437,91 @@ nav ul li a:hover, nav ul li a.active {
     border-radius: 5px;
     z-index: 1000; /* Ensure it appears above other elements */
 }
+
+.select-menu{
+    width: 380px;
+    margin: 140px auto;
+}
+
+.select-menu .select-btn{
+    display: flex;
+    height: 55px;
+    background: #fff;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 400;
+    border-radius: 8px;
+    align-items: center;
+    cursor: pointer;
+    justify-content: space-between;
+}
+
+.select-btn i{
+    font-size: 25px;
+    transition: 0.3s;
+}
+
+.select-menu.active .select-btn i{
+    transform: rotate(-180deg);
+}
+
+.select-menu .options{
+    position: relative;
+    padding: 20px;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #fff;
+    display: none;
+}
+
+.select-menu.active .options{
+    display: block;
+}
+
+.options .option{
+    display: flex;
+    height: 55px;
+    cursor: pointer;
+    padding: 0 16px;
+    border-radius: 8px;
+    align-items: center;
+    background: #fff;
+}
+
+.options .option:hover{
+    background: #f2f2f2;
+}
+
+.option i{
+    font-size: 25px;
+    margin-right: 12px;
+}
+
+.option .option-text{
+    font-size: 18px;
+    color: #333;
+}
+
+.academic-period {
+    margin-bottom: 20px;
+}
+
+.period-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.period-header h3 {
+    margin: 0;
+}
+
+.delete-period-btn {
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

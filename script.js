@@ -35,9 +35,10 @@ document.getElementById('add-term-btn').addEventListener('click', function() {
     const termCount = tableBody.rows.length + 1;
     newRow.innerHTML = `
         <td>${termCount}</td>
-        <td><input type="month" placeholder="Start Date"></td>
-        <td><input type="month" placeholder="End Date"></td>
-        <td><input type="number" step="0.01" placeholder="GPA"></td>
+        <td class="start-date"><input type="month" placeholder="Start Date"></td>
+        <td class="end-date"><input type="month" placeholder="End Date"></td>
+        <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
+        <td class="gpa"><input type="number" step="0.01" placeholder="GPA"></td>
     `;
     tableBody.appendChild(newRow);
     addContextMenuListener(newRow);
@@ -363,6 +364,254 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show the first tab by default
     showTab('home');
+});
+
+const optionMenu = document.querySelector(".select-menu"),
+        selectBtn = optionMenu.querySelector(".select-btn"),
+        options = optionMenu.querySelectorAll(".option"),
+        sBtn_text = optionMenu.querySelector(".sBtn-text");
+
+selectBtn.addEventListener("click", () => optionMenu.classList.toggle("active"));
+
+options.forEach(option => {
+    option.addEventListener("click", () => {
+        let selectedOption = option.querySelector(".option-text").innerText;
+        sBtn_text.innerText = selectedOption;
+        
+        optionMenu.classList.remove("active");
+    });
+});
+
+document.getElementById('add-academic-period-btn').addEventListener('click', function() {
+    const container = document.getElementById('academic-periods-container');
+    const periodCount = container.children.length + 1;
+    const periodId = `period-${Date.now()}`;
+    const newPeriod = document.createElement('div');
+    newPeriod.className = 'academic-period';
+    newPeriod.innerHTML = `
+        <div class="period-header">
+            <h3>Academic Period ${periodCount}</h3>
+            <button class="delete-period-btn">Delete</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#${periodId}-calendar" class="tab-link" data-tab="${periodId}-calendar">Academic Calendar</a></li>
+                <li><a href="#${periodId}-courses" class="tab-link" data-tab="${periodId}-courses">Courses</a></li>
+            </ul>
+        </nav>
+        <div class="tab-content" id="${periodId}-calendar">
+            <h3>Academic Calendar</h3>
+            <table class="week-table">
+                <thead>
+                    <tr>
+                        <th>Week No.</th>
+                        <th>Start</th>
+                        <th>End</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="date" class="week-start"></td>
+                        <td><input type="date" class="week-end"></td>
+                    </tr>
+                    <!-- Additional rows can be added dynamically -->
+                </tbody>
+            </table>
+            <button class="add-week-btn">Add Week</button>
+        </div>
+        <div class="tab-content" id="${periodId}-courses">
+            <h3>Courses</h3>
+            <table class="courses-table">
+                <thead>
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Course Title</th>
+                        <th>Course Section</th>
+                        <th>Professor</th>
+                        <th>Units</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" class="course-code" placeholder="Course Code"></td>
+                        <td class="course-title"></td>
+                        <td><input type="text" placeholder="Course Section"></td>
+                        <td><input type="text" placeholder="Professor"></td>
+                        <td class="units"></td>
+                        <td><input type="number" step="0.01" placeholder="Grade"></td>
+                    </tr>
+                    <!-- Additional rows can be added dynamically -->
+                </tbody>
+            </table>
+            <button class="add-course-btn">Add Course</button>
+        </div>
+    `;
+    container.appendChild(newPeriod);
+
+    // Add event listeners to the new tabs
+    newPeriod.querySelectorAll('.tab-link').forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const tabId = this.getAttribute('data-tab');
+            showTab(tabId, newPeriod);
+        });
+    });
+
+    // Show the first tab by default
+    showTab(`${periodId}-calendar`, newPeriod);
+
+    // Add event listener to delete button
+    newPeriod.querySelector('.delete-period-btn').addEventListener('click', function() {
+        container.removeChild(newPeriod);
+        updatePeriodNumbers();
+    });
+
+    // Add event listener to add week button
+    newPeriod.querySelector('.add-week-btn').addEventListener('click', function() {
+        const weekTableBody = newPeriod.querySelector('.week-table tbody');
+        const newRow = document.createElement('tr');
+        const weekCount = weekTableBody.rows.length + 1;
+        newRow.innerHTML = `
+            <td>${weekCount}</td>
+            <td><input type="date" class="week-start"></td>
+            <td><input type="date" class="week-end"></td>
+        `;
+        weekTableBody.appendChild(newRow);
+    });
+
+    // Add event listener to add course button
+    newPeriod.querySelector('.add-course-btn').addEventListener('click', function() {
+        const coursesTableBody = newPeriod.querySelector('.courses-table tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td><input type="text" class="course-code" placeholder="Course Code"></td>
+            <td class="course-title"></td>
+            <td><input type="text" placeholder="Course Section"></td>
+            <td><input type="text" placeholder="Professor"></td>
+            <td class="units"></td>
+            <td><input type="number" step="0.01" placeholder="Grade"></td>
+        `;
+        coursesTableBody.appendChild(newRow);
+
+        // Add event listener to populate course title and units based on course code
+        newRow.querySelector('.course-code').addEventListener('input', function() {
+            const courseCode = this.value.trim();
+            const courseTitleCell = newRow.querySelector('.course-title');
+            const unitsCell = newRow.querySelector('.units');
+            const courseInfo = getCourseInfo(courseCode);
+            courseTitleCell.textContent = courseInfo.title || '';
+            unitsCell.textContent = courseInfo.units || '';
+        });
+    });
+
+    // Add event listener to populate course title and units based on course code for the initial row
+    newPeriod.querySelector('.course-code').addEventListener('input', function() {
+        const courseCode = this.value.trim();
+        const courseTitleCell = newPeriod.querySelector('.course-title');
+        const unitsCell = newPeriod.querySelector('.units');
+        const courseInfo = getCourseInfo(courseCode);
+        courseTitleCell.textContent = courseInfo.title || '';
+        unitsCell.textContent = courseInfo.units || '';
+    });
+});
+
+function getCourseInfo(courseCode) {
+    const courseTables = document.querySelectorAll('#program-flowchart .course-table');
+    for (const table of courseTables) {
+        const rows = table.querySelectorAll('tbody tr');
+        for (const row of rows) {
+            const codeCell = row.querySelector('.course-code input');
+            if (codeCell && codeCell.value.trim() === courseCode) {
+                const titleCell = row.querySelector('.course-title input');
+                const unitsCell = row.querySelector('.units input');
+                return {
+                    title: titleCell ? titleCell.value.trim() : '',
+                    units: unitsCell ? unitsCell.value.trim() : ''
+                };
+            }
+        }
+    }
+    return {};
+}
+
+function showTab(tabId, periodElement) {
+    periodElement.querySelectorAll('.tab-content').forEach(content => {
+        content.style.display = content.id === tabId ? 'block' : 'none';
+    });
+    periodElement.querySelectorAll('.tab-link').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('data-tab') === tabId);
+    });
+}
+
+function updatePeriodNumbers() {
+    const periods = document.querySelectorAll('.academic-period');
+    periods.forEach((period, index) => {
+        period.querySelector('h3').textContent = `Academic Period ${index + 1}`;
+    });
+}
+
+// ...existing code...
+
+document.querySelector('.add-course-btn').addEventListener('click', function() {
+    const coursesTableBody = document.querySelector('#course-tables-container tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
+        <td><input type="text" class="course-code" placeholder="Course Code"></td>
+        <td><input type="text" class="course-title" placeholder="Course Title"></td>
+        <td><input type="text" class="course-section" placeholder="Course Section"></td>
+        <td><input type="text" class="professor" placeholder="Professor"></td>
+        <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
+        <td><input type="number" class="grade" step="0.01" placeholder="Grade"></td>
+    `;
+    coursesTableBody.appendChild(newRow);
+});
+
+// ...existing code...
+
+document.getElementById('add-all-courses-btn').addEventListener('click', function() {
+    const coursesTableBody = document.querySelector('#course-tables-container tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
+        <td><input type="text" class="flowchart" placeholder="Flowchart"></td>
+        <td><input type="text" class="course-code" placeholder="Course Code"></td>
+        <td><input type="text" class="course-title" placeholder="Course Title"></td>
+        <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
+    `;
+    coursesTableBody.appendChild(newRow);
+});
+
+// ...existing code...
+
+document.getElementById('add-all-courses-btn').addEventListener('click', function() {
+    const coursesTableBody = document.querySelector('#course-tables-container tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
+        <td><input type="text" class="flowchart" placeholder="Flowchart"></td>
+        <td><input type="text" class="course-code" placeholder="Course Code"></td>
+        <td><input type="text" class="course-title" placeholder="Course Title"></td>
+        <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
+    `;
+    coursesTableBody.appendChild(newRow);
+});
+
+// ...existing code...
+
+document.getElementById('add-all-courses-btn').addEventListener('click', function() {
+    const coursesTableBody = document.querySelector('#course-tables-container tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
+        <td><input type="text" class="flowchart" placeholder="Flowchart"></td>
+        <td><input type="text" class="course-code" placeholder="Course Code"></td>
+        <td><input type="text" class="course-title" placeholder="Course Title"></td>
+        <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
+    `;
+    coursesTableBody.appendChild(newRow);
 });
 
 // ...existing code...
