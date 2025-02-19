@@ -14,7 +14,7 @@
         <nav>
             <ul>
                 <li><a href="#home" class="tab-link" data-tab="home">Home</a></li>
-                <li><a href="#program-flowchart" class="tab-link" data-tab="program-overview">Program Overview</a></li>
+                <li><a href="#program-overview" class="tab-link" data-tab="program-overview">Program Overview</a></li>
                 <li><a href="#program-flowchart" class="tab-link" data-tab="program-flowchart">Program Flowchart</a></li>
                 <li><a href="#study-room" class="tab-link" data-tab="study-room">Study Room</a></li>
                 <li><a href="#focus" class="tab-link" data-tab="focus">Focus</a></li>
@@ -81,6 +81,41 @@
             <div id="academic-periods-container">
                 <!-- Academic periods will be dynamically added here -->
             </div>
+            <!-- Move year table here -->
+            <div class="term-details">
+                <h3 id="term-details-header">Academic Program Calendar</h3>
+                <button id="edit-term-columns-btn">Edit Columns</button>
+                <div id="term-columns-checklist" style="display: none;">
+                    <label><input type="checkbox" value="start-date" checked> Start Date</label>
+                    <label><input type="checkbox" value="end-date" checked> End Date</label>
+                    <label><input type="checkbox" value="units" checked> No. of Units</label>
+                    <label><input type="checkbox" value="gpa" checked> GPA</label>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th id="year-no-header">Year</th>
+                            <th class="start-date">Start Date</th>
+                            <th class="end-date">End Date</th>
+                            <th class="units">No. of Units</th>
+                            <th class="gpa">GPA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td class="start-date"><input type="month" placeholder="Start Date"></td>
+                            <td class="end-date"><input type="month" placeholder="End Date"></td>
+                            <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
+                            <td class="gpa"><input type="number" step="0.01" placeholder="GPA"></td>
+                        </tr>
+                        <!-- Additional rows can be added dynamically -->
+                    </tbody>
+                </table>
+                <button id="add-term-btn">Add Year</button>
+                <label for="cgpa">Cumulative GPA (CGPA):</label>
+                <input type="number" id="cgpa" step="0.01" placeholder="Enter CGPA">
+            </div>
         </div>
         <div class="tab-content" id="program-flowchart">
             <div class="program-card">
@@ -115,45 +150,11 @@
             </div>
             
             <label for="total-terms">Total:</label>
-            <input type="number" id="total-terms" min="1" placeholder="Enter total number of semesters/terms">
+            <input type="number" id="total-terms" min="1">
             
             <label for="program-start-date">Program Start Date:</label>
             <input type="month" id="program-start-date" placeholder="Enter start date">
             
-            <div class="term-details">
-                <h3 id="term-details-header">Term Details</h3>
-                <button id="edit-term-columns-btn">Edit Columns</button>
-                <div id="term-columns-checklist" style="display: none;">
-                    <label><input type="checkbox" value="start-date" checked> Start Date</label>
-                    <label><input type="checkbox" value="end-date" checked> End Date</label>
-                    <label><input type="checkbox" value="units" checked> No. of Units</label>
-                    <label><input type="checkbox" value="gpa" checked> GPA</label>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th id="term-no-header">Term No.</th>
-                            <th class="start-date">Start Date</th>
-                            <th class="end-date">End Date</th>
-                            <th class="units">No. of Units</th>
-                            <th class="gpa">GPA</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td class="start-date"><input type="month" placeholder="Start Date"></td>
-                            <td class="end-date"><input type="month" placeholder="End Date"></td>
-                            <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
-                            <td class="gpa"><input type="number" step="0.01" placeholder="GPA"></td>
-                        </tr>
-                        <!-- Additional rows can be added dynamically -->
-                    </tbody>
-                </table>
-                <button id="add-term-btn">Add Term</button>
-                <label for="cgpa">Cumulative GPA (CGPA):</label>
-                <input type="number" id="cgpa" step="0.01" placeholder="Enter CGPA">
-            </div>
             <div id="course-tables-container">
                 <h3>All Courses</h3>
                 <table>
@@ -164,6 +165,7 @@
                             <th>Course Code</th>
                             <th>Course Title</th>
                             <th>Units</th>
+                            <th>Pre-requisites</th> <!-- Add pre-requisites column -->
                         </tr>
                     </thead>
                     <tbody>
@@ -824,23 +826,6 @@
 
         // Ensure the main container is initially hidden
         document.getElementById('main-container').style.display = 'none';
-
-        document.getElementById('program-type').addEventListener('change', function() {
-            const programType = this.value;
-            const termDetailsHeader = document.getElementById('term-details-header');
-            const termNoHeader = document.getElementById('term-no-header');
-            
-            if (programType === 'semestral') {
-                termDetailsHeader.textContent = 'Semester Details';
-                termNoHeader.textContent = 'Semester No.';
-            } else if (programType === 'trimestral') {
-                termDetailsHeader.textContent = 'Trimester Details';
-                termNoHeader.textContent = 'Trimester No.';
-            } else if (programType === 'quarterly') {
-                termDetailsHeader.textContent = 'Quarter Details';
-                termNoHeader.textContent = 'Quarter No.';
-            }
-        });
 
         document.getElementById('add-term-btn').addEventListener('click', function() {
             const tableBody = document.querySelector('.term-details tbody');
@@ -1566,6 +1551,40 @@
                 period.querySelector('h3').textContent = `Academic Period ${index + 1}`;
             });
         }
+
+        document.getElementById('add-all-courses-btn').addEventListener('click', function() {
+            const coursesTableBody = document.querySelector('#course-tables-container tbody');
+            const newRow = document.createElement('tr');
+            const previousCourses = Array.from(coursesTableBody.querySelectorAll('tr')).map(row => row.querySelector('.course-code').value);
+
+            newRow.innerHTML = `
+                <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
+                <td><input type="text" class="flowchart" placeholder="Flowchart"></td>
+                <td><input type="text" class="course-code" placeholder="Course Code"></td>
+                <td><input type="text" class="course-title" placeholder="Course Title"></td>
+                <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
+                <td>
+                    <select class="pre-requisites">
+                        <option value="">None</option>
+                        ${previousCourses.map(course => `<option value="${course}">${course}</option>`).join('')}
+                    </select>
+                </td>
+            `;
+            coursesTableBody.appendChild(newRow);
+        });
+
+        // Ensure the pre-requisites dropdown is updated when a new course is added
+        document.querySelector('#course-tables-container tbody').addEventListener('DOMNodeInserted', function(event) {
+            const rows = Array.from(document.querySelectorAll('#course-tables-container tbody tr'));
+            rows.forEach((row, index) => {
+                const preReqSelect = row.querySelector('.pre-requisites');
+                const previousCourses = rows.slice(0, index).map(r => r.querySelector('.course-code').value);
+                preReqSelect.innerHTML = `
+                    <option value="">None</option>
+                    ${previousCourses.map(course => `<option value="${course}">${course}</option>`).join('')}
+                `;
+            });
+        });
     </script>
 </body>
 </html>
