@@ -466,6 +466,7 @@ document.getElementById('add-academic-period-btn').addEventListener('click', fun
     newPeriod.querySelector('.delete-period-btn').addEventListener('click', function() {
         container.removeChild(newPeriod);
         updatePeriodNumbers();
+        updateAcademicPeriodTabs();
     });
 
     // Add event listener to add week button
@@ -515,6 +516,8 @@ document.getElementById('add-academic-period-btn').addEventListener('click', fun
         courseTitleCell.textContent = courseInfo.title || '';
         unitsCell.textContent = courseInfo.units || '';
     });
+
+    updateAcademicPeriodTabs();
 });
 
 function getCourseInfo(courseCode) {
@@ -549,6 +552,40 @@ function updatePeriodNumbers() {
     const periods = document.querySelectorAll('.academic-period');
     periods.forEach((period, index) => {
         period.querySelector('h3').textContent = `Academic Period ${index + 1}`;
+    });
+}
+
+function updateAcademicPeriodTabs() {
+    const tabList = document.getElementById('academic-period-tab-list');
+    tabList.innerHTML = '';
+    const periods = document.querySelectorAll('.academic-period');
+    periods.forEach((period, index) => {
+        const tab = document.createElement('li');
+        tab.innerHTML = `<a href="#" class="academic-period-tab" data-period-index="${index + 1}">Period ${index + 1}</a>`;
+        tabList.appendChild(tab);
+    });
+
+    // Add event listeners to the new tabs
+    document.querySelectorAll('.academic-period-tab').forEach(tab => {
+        tab.addEventListener('click', function(event) {
+            event.preventDefault();
+            const periodIndex = this.getAttribute('data-period-index');
+            showAcademicPeriod(periodIndex);
+        });
+    });
+
+    // Show the first period by default
+    if (periods.length > 0) {
+        showAcademicPeriod(1);
+    }
+}
+
+function showAcademicPeriod(index) {
+    document.querySelectorAll('.academic-period').forEach((period, i) => {
+        period.style.display = (i + 1) == index ? 'block' : 'none';
+    });
+    document.querySelectorAll('.academic-period-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-period-index') == index);
     });
 }
 
@@ -604,14 +641,80 @@ document.getElementById('add-all-courses-btn').addEventListener('click', functio
 document.getElementById('add-all-courses-btn').addEventListener('click', function() {
     const coursesTableBody = document.querySelector('#course-tables-container tbody');
     const newRow = document.createElement('tr');
+    const previousCourses = Array.from(coursesTableBody.querySelectorAll('tr')).map(row => 
+        row.querySelector('.course-code input')?.value || row.querySelector('.course-code')?.textContent.trim());
+
     newRow.innerHTML = `
-        <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
-        <td><input type="text" class="flowchart" placeholder="Flowchart"></td>
-        <td><input type="text" class="course-code" placeholder="Course Code"></td>
-        <td><input type="text" class="course-title" placeholder="Course Title"></td>
-        <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
+        <td class="editable-cell term-taken"><span></span><input type="text" placeholder="Term Taken"></td>
+        <td class="editable-cell flowchart"><span></span><input type="text" placeholder="Flowchart"></td>
+        <td class="editable-cell course-code"><span></span><input type="text" placeholder="Course Code"></td>
+        <td class="editable-cell course-title"><span></span><input type="text" placeholder="Course Title"></td>
+        <td class="editable-cell units"><span></span><input type="number" step="0.01" placeholder="Units"></td>
+        <td>
+            <select class="pre-requisite-type">
+                <option value="S">S</option>
+                <option value="H">H</option>
+                <option value="C">C</option>
+            </select>
+        </td>
+        <td>
+            <select class="pre-requisites">
+                <option value="">None</option>
+                ${previousCourses.map(course => course ? `<option value="${course}">${course}</option>` : '').join('')}
+            </select>
+        </td>
     `;
     coursesTableBody.appendChild(newRow);
+    addEditableCellListeners(newRow);
+});
+
+function addEditableCellListeners(row) {
+    row.querySelectorAll('.editable-cell').forEach(cell => {
+        const span = cell.querySelector('span');
+        const input = cell.querySelector('input');
+
+        // Initially hide input
+        input.style.display = 'none';
+
+        // Show input on cell click
+        cell.addEventListener('click', () => {
+            span.style.display = 'none';
+            input.style.display = '';
+            input.focus();
+        });
+
+        // Update span and hide input on blur
+        input.addEventListener('blur', () => {
+            span.textContent = input.value;
+            span.style.display = '';
+            input.style.display = 'none';
+        });
+
+        // Update on enter key
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                input.blur();
+            }
+        });
+    });
+}
+
+// Add listeners to existing rows
+document.querySelectorAll('#course-tables-container tbody tr').forEach(row => {
+    addEditableCellListeners(row);
+});
+
+// Ensure the pre-requisites dropdown is updated when a new course is added
+document.querySelector('#course-tables-container tbody').addEventListener('DOMNodeInserted', function(event) {
+    const rows = Array.from(document.querySelectorAll('#course-tables-container tbody tr'));
+    rows.forEach((row, index) => {
+        const preReqSelect = row.querySelector('.pre-requisites');
+        const previousCourses = rows.slice(0, index).map(r => r.querySelector('.course-code input')?.value || r.querySelector('.course-code')?.textContent.trim());
+        preReqSelect.innerHTML = `
+            <option value="">None</option>
+            ${previousCourses.map(course => `<option value="${course}">${course}</option>`).join('')}
+        `;
+    });
 });
 
 // ...existing code...

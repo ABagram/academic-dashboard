@@ -77,7 +77,12 @@
             <button id="add-requirement-btn">Add Requirement</button> <!-- Button to add new rows -->
         </div>
         <div class="tab-content" id="program-overview">
-            <button id="add-academic-period-btn">Add Academic Period</button>
+            <div id="academic-period-tabs">
+                <ul id="academic-period-tab-list">
+                    <!-- Tabs for academic periods will be dynamically added here -->
+                    <li><a href="#" id="add-academic-period-btn" class="academic-period-tab add-tab">+</a></li>
+                </ul>
+            </div>
             <div id="academic-periods-container">
                 <!-- Academic periods will be dynamically added here -->
             </div>
@@ -165,6 +170,7 @@
                             <th>Course Code</th>
                             <th>Course Title</th>
                             <th>Units</th>
+                            <th>Type of Pre-requisite</th>
                             <th>Pre-requisites</th> <!-- Add pre-requisites column -->
                         </tr>
                     </thead>
@@ -1384,7 +1390,8 @@
             newRow.querySelector('input[placeholder="Due Time"]').addEventListener('input', updateTimeLeft);
         });
 
-        document.getElementById('add-academic-period-btn').addEventListener('click', function() {
+        document.getElementById('add-academic-period-btn').addEventListener('click', function(event) {
+            event.preventDefault();
             const container = document.getElementById('academic-periods-container');
             const periodCount = container.children.length + 1;
             const periodId = `period-${Date.now()}`;
@@ -1468,6 +1475,7 @@
             newPeriod.querySelector('.delete-period-btn').addEventListener('click', function() {
                 container.removeChild(newPeriod);
                 updatePeriodNumbers();
+                updateAcademicPeriodTabs();
             });
 
             // Add event listener to add week button
@@ -1517,6 +1525,8 @@
                 courseTitleCell.textContent = courseInfo.title || '';
                 unitsCell.textContent = courseInfo.units || '';
             });
+
+            updateAcademicPeriodTabs();
         });
 
         function getCourseInfo(courseCode) {
@@ -1564,11 +1574,19 @@
                 <td><input type="text" class="course-title" placeholder="Course Title"></td>
                 <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
                 <td>
+                    <select class="pre-requisite-type">
+                        <option value="soft-requisite">S</option>
+                        <option value="hard-requisite">H</option>
+                        <option value="co-requisite">C</option>
+                    </select>
+                <td>
+                    <input type="text" class="search-bar" placeholder="Search pre-requisites">
                     <select class="pre-requisites">
                         <option value="">None</option>
                         ${previousCourses.map(course => `<option value="${course}">${course}</option>`).join('')}
                     </select>
                 </td>
+                
             `;
             coursesTableBody.appendChild(newRow);
         });
@@ -1585,6 +1603,44 @@
                 `;
             });
         });
+
+        function updateAcademicPeriodTabs() {
+            const tabList = document.getElementById('academic-period-tab-list');
+            const addBtn = document.getElementById('add-academic-period-btn');
+            tabList.innerHTML = '';
+            const periods = document.querySelectorAll('.academic-period');
+            periods.forEach((period, index) => {
+                const tab = document.createElement('li');
+                tab.innerHTML = `<a href="#" class="academic-period-tab" data-period-index="${index + 1}">${index + 1}</a>`;
+                tabList.appendChild(tab);
+            });
+            tabList.appendChild(addBtn);
+
+            // Add event listeners to the new tabs
+            document.querySelectorAll('.academic-period-tab').forEach(tab => {
+                tab.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const periodIndex = this.getAttribute('data-period-index');
+                    if (periodIndex) {
+                        showAcademicPeriod(periodIndex);
+                    }
+                });
+            });
+
+            // Show the first period by default
+            if (periods.length > 0) {
+                showAcademicPeriod(1);
+            }
+        }
+
+        function showAcademicPeriod(index) {
+            document.querySelectorAll('.academic-period').forEach((period, i) => {
+                period.style.display = (i + 1) == index ? 'block' : 'none';
+            });
+            document.querySelectorAll('.academic-period-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.getAttribute('data-period-index') == index);
+            });
+        }
     </script>
 </body>
 </html>

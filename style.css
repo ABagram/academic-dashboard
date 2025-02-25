@@ -525,3 +525,101 @@ nav ul li a:hover, nav ul li a.active {
     border-radius: 4px;
     cursor: pointer;
 }
+
+.search-bar {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.search-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.search-select-container input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.search-select-container select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.editable-cell {
+    position: relative;
+    cursor: text;
+}
+
+.editable-cell span {
+    display: block;
+    min-height: 1em;
+    padding: 8px;
+}
+
+.editable-cell input {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+.editable-cell input:focus {
+    outline: 2px solid #0039c8;
+    background: white;
+}
+
+#academic-period-tabs {
+    margin-top: 20px;
+}
+
+#academic-period-tab-list {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    padding-inline-start: 0;
+}
+
+#academic-period-tab-list li {
+    margin: 0 10px;
+}
+
+#academic-period-tab-list li a {
+    text-decoration: none;
+    padding: 10px 20px;
+    display: block;
+    color: #0039c8;
+    font-weight: bold;
+    border: solid 2px #0039c8;
+    border-radius: 2em;
+}
+
+#academic-period-tab-list li a:hover, #academic-period-tab-list li a.active {
+    color: #f2f2f2;
+    background-color: #0039c8;
+}
+
+#academic-period-tab-list li a.add-tab {
+    color: #0039c8;
+    border: solid 2px #0039c8;
+    border-radius: 2em;
+}
+
+#academic-period-tab-list li a.add-tab:hover {
+    color: #f2f2f2;
+    background-color: #0039c8;
+}
