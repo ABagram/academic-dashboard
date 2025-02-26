@@ -79,6 +79,7 @@
         <div class="tab-content" id="program-overview">
             <div id="academic-period-tabs">
                 <ul id="academic-period-tab-list">
+                    <li><a href="#" class="academic-period-tab overview-tab active" data-period-index="overview">OVERVIEW</a></li>
                     <!-- Tabs for academic periods will be dynamically added here -->
                     <li><a href="#" id="add-academic-period-btn" class="academic-period-tab add-tab">+</a></li>
                 </ul>
@@ -86,7 +87,8 @@
             <div id="academic-periods-container">
                 <!-- Academic periods will be dynamically added here -->
             </div>
-            <!-- Move year table here -->
+        </div>
+        <div class="tab-content" id="overview">
             <div class="term-details">
                 <h3 id="term-details-header">Academic Program Calendar</h3>
                 <button id="edit-term-columns-btn">Edit Columns</button>
@@ -96,28 +98,24 @@
                     <label><input type="checkbox" value="units" checked> No. of Units</label>
                     <label><input type="checkbox" value="gpa" checked> GPA</label>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th id="year-no-header">Year</th>
-                            <th class="start-date">Start Date</th>
-                            <th class="end-date">End Date</th>
-                            <th class="units">No. of Units</th>
-                            <th class="gpa">GPA</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td class="start-date"><input type="month" placeholder="Start Date"></td>
-                            <td class="end-date"><input type="month" placeholder="End Date"></td>
-                            <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
-                            <td class="gpa"><input type="number" step="0.01" placeholder="GPA"></td>
-                        </tr>
-                        <!-- Additional rows can be added dynamically -->
-                    </tbody>
-                </table>
-                <button id="add-term-btn">Add Year</button>
+                <div id="manual-input-section">
+                    <h4>Manual Input</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th id="program-type-header">Program Type</th>
+                                <th class="start-date">Start Date</th>
+                                <th class="end-date">End Date</th>
+                                <th class="units">No. of Units</th>
+                                <th class="gpa">GPA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="program-calendar-body">
+                            <!-- Rows will be dynamically added here -->
+                        </tbody>
+                    </table>
+                    <button id="add-term-btn">Add Year</button>
+                </div>
                 <label for="cgpa">Cumulative GPA (CGPA):</label>
                 <input type="number" id="cgpa" step="0.01" placeholder="Enter CGPA">
             </div>
@@ -849,6 +847,7 @@
             const programType = document.getElementById('program-type').value;
             addRow(programType, termCount);
             applyColumnVisibility();
+            updateProgramCalendarRows();
         });
 
         function applyColumnVisibility() {
@@ -896,6 +895,7 @@
                 const termNumber = index + 1;
             });
             applyColumnVisibility();
+            updateProgramCalendarRows();
         });
 
         function addContextMenuListener(row) {
@@ -1406,10 +1406,14 @@
                     <ul>
                         <li><a href="#${periodId}-calendar" class="tab-link" data-tab="${periodId}-calendar">Academic Calendar</a></li>
                         <li><a href="#${periodId}-courses" class="tab-link" data-tab="${periodId}-courses">Courses</a></li>
+                        <li><a href="#${periodId}-requirements" class="tab-link" data-tab="${periodId}-requirements">Course Requirements</a></li>
                     </ul>
                 </nav>
                 <div class="tab-content" id="${periodId}-calendar">
-                    <h3>Academic Calendar</h3>
+                    <div class="calendar-header">
+                        <h3>Academic Calendar</h3>
+                        <button class="auto-btn">Auto</button> <!-- Add Auto button here -->
+                    </div>
                     <table class="week-table">
                         <thead>
                             <tr>
@@ -1428,6 +1432,35 @@
                         </tbody>
                     </table>
                     <button class="add-week-btn">Add Week</button>
+                    <div id="auto-input-section-${periodId}">
+                        <h4>Automatic Input</h4>
+                        <label for="num-weeks-${periodId}">Number of Weeks:</label>
+                        <input type="number" id="num-weeks-${periodId}" min="1">
+                        <label for="auto-start-date-${periodId}">Start Date:</label>
+                        <input type="date" id="auto-start-date-${periodId}">
+                        <label for="week-start-day-${periodId}">Week Start Day:</label>
+                        <select id="week-start-day-${periodId}">
+                            <option value="Sunday">Sunday</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                        <label for="week-end-day-${periodId}">Week End Day:</label>
+                        <select id="week-end-day-${periodId}">
+                            <option value="Sunday">Sunday</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                        <button id="auto-populate-btn-${periodId}">Auto Populate</button>
+                        <div id="calculated-end-date-${periodId}"></div> <!-- Display calculated end date -->
+                    </div>
                 </div>
                 <div class="tab-content" id="${periodId}-courses">
                     <h3>Courses</h3>
@@ -1456,6 +1489,28 @@
                     </table>
                     <button class="add-course-btn">Add Course</button>
                 </div>
+                <div class="tab-content" id="${periodId}-requirements">
+                    <h3>Course Requirements</h3>
+                    <table class="requirements-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Course Code</th>
+                                <th>Requirement</th>
+                                <th>Description</th>
+                                <th>Due Date</th>
+                                <th>Day</th>
+                                <th>Start Time</th>
+                                <th>Due Time</th>
+                                <th>Time Left</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows can be added dynamically -->
+                        </tbody>
+                    </table>
+                    <button class="add-requirement-btn">Add Requirement</button>
+                </div>
             `;
             container.appendChild(newPeriod);
 
@@ -1476,6 +1531,7 @@
                 container.removeChild(newPeriod);
                 updatePeriodNumbers();
                 updateAcademicPeriodTabs();
+                updateProgramCalendarRows();
             });
 
             // Add event listener to add week button
@@ -1526,8 +1582,97 @@
                 unitsCell.textContent = courseInfo.units || '';
             });
 
+            // Add event listener to add requirement button
+            newPeriod.querySelector('.add-requirement-btn').addEventListener('click', function() {
+                const requirementsTableBody = newPeriod.querySelector('.requirements-table tbody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>
+                        <select>
+                            <option value="In-Progress">In-Progress</option>
+                            <option value="Done">Done</option>
+                        </select>
+                    </td>
+                    <td><input type="text" placeholder="Course Code"></td>
+                    <td><input type="text" placeholder="Requirement"></td>
+                    <td><input type="text" placeholder="Description"></td>
+                    <td><input type="date" class="due-date" placeholder="Due Date"></td>
+                    <td class="day"></td>
+                    <td><input type="time" placeholder="Start Time"></td>
+                    <td><input type="time" placeholder="Due Time"></td>
+                    <td class="time-left"></td>
+                `;
+                requirementsTableBody.appendChild(newRow);
+
+                // Add event listener to update the "Day" column based on the "Due Date" input
+                newRow.querySelector('.due-date').addEventListener('input', function() {
+                    const dueDate = new Date(this.value);
+                    const dayCell = newRow.querySelector('.day');
+                    const options = { weekday: 'short' };
+                    dayCell.textContent = dueDate.toLocaleDateString(undefined, options);
+                });
+
+                // Add event listener to update the "Time Left" column based on the "Due Date" and "Due Time" inputs
+                newRow.querySelector('.due-date').addEventListener('input', updateTimeLeft);
+                newRow.querySelector('input[placeholder="Due Time"]').addEventListener('input', updateTimeLeft);
+            });
+
+            // Add event listeners for auto-populate functionality
+            document.getElementById(`num-weeks-${periodId}`).addEventListener('input', () => calculateEndDate(periodId));
+            document.getElementById(`auto-start-date-${periodId}`).addEventListener('input', () => calculateEndDate(periodId));
+            document.getElementById(`week-start-day-${periodId}`).addEventListener('change', () => calculateEndDate(periodId));
+            document.getElementById(`week-end-day-${periodId}`).addEventListener('change', () => calculateEndDate(periodId));
+
+            document.getElementById(`auto-populate-btn-${periodId}`).addEventListener('click', function() {
+                const numWeeks = parseInt(document.getElementById(`num-weeks-${periodId}`).value);
+                const startDate = new Date(document.getElementById(`auto-start-date-${periodId}`).value);
+                const weekStartDay = document.getElementById(`week-start-day-${periodId}`).value;
+                const weekEndDay = document.getElementById(`week-end-day-${periodId}`).value;
+
+                if (isNaN(numWeeks) || !startDate) {
+                    alert('Please fill in all fields correctly.');
+                    return;
+                }
+
+                const weekTableBody = newPeriod.querySelector('.week-table tbody');
+                weekTableBody.innerHTML = '';
+
+                let currentDate = new Date(startDate);
+                for (let i = 0; i < numWeeks; i++) {
+                    const newRow = document.createElement('tr');
+                    const endDate = new Date(currentDate);
+                    endDate.setDate(endDate.getDate() + (getDayIndex(weekEndDay) - getDayIndex(weekStartDay)));
+
+                    newRow.innerHTML = `
+                        <td>${i + 1}</td>
+                        <td><input type="date" value="${currentDate.toISOString().slice(0, 10)}" class="week-start"></td>
+                        <td><input type="date" value="${endDate.toISOString().slice(0, 10)}" class="week-end"></td>
+                    `;
+                    weekTableBody.appendChild(newRow);
+
+                    currentDate.setDate(currentDate.getDate() + 7); // Move to the next week
+                }
+            });
+
             updateAcademicPeriodTabs();
+            updateProgramCalendarRows();
         });
+
+        function calculateEndDate(periodId) {
+            const numWeeks = parseInt(document.getElementById(`num-weeks-${periodId}`).value);
+            const startDate = new Date(document.getElementById(`auto-start-date-${periodId}`).value);
+            const weekStartDay = document.getElementById(`week-start-day-${periodId}`).value;
+            const weekEndDay = document.getElementById(`week-end-day-${periodId}`).value;
+
+            if (isNaN(numWeeks) || !startDate) {
+                document.getElementById(`calculated-end-date-${periodId}`).textContent = '';
+                return;
+            }
+
+            const finalEndDate = new Date(startDate);
+            finalEndDate.setDate(finalEndDate.getDate() + (numWeeks * 7) - 1);
+            document.getElementById(`calculated-end-date-${periodId}`).textContent = `Calculated End Date: ${finalEndDate.toISOString().slice(0, 10)}`;
+        }
 
         function getCourseInfo(courseCode) {
             const courseTable = document.querySelector('#program-flowchart table');
@@ -1562,52 +1707,12 @@
             });
         }
 
-        document.getElementById('add-all-courses-btn').addEventListener('click', function() {
-            const coursesTableBody = document.querySelector('#course-tables-container tbody');
-            const newRow = document.createElement('tr');
-            const previousCourses = Array.from(coursesTableBody.querySelectorAll('tr')).map(row => row.querySelector('.course-code').value);
-
-            newRow.innerHTML = `
-                <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
-                <td><input type="text" class="flowchart" placeholder="Flowchart"></td>
-                <td><input type="text" class="course-code" placeholder="Course Code"></td>
-                <td><input type="text" class="course-title" placeholder="Course Title"></td>
-                <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
-                <td>
-                    <select class="pre-requisite-type">
-                        <option value="soft-requisite">S</option>
-                        <option value="hard-requisite">H</option>
-                        <option value="co-requisite">C</option>
-                    </select>
-                <td>
-                    <input type="text" class="search-bar" placeholder="Search pre-requisites">
-                    <select class="pre-requisites">
-                        <option value="">None</option>
-                        ${previousCourses.map(course => `<option value="${course}">${course}</option>`).join('')}
-                    </select>
-                </td>
-                
-            `;
-            coursesTableBody.appendChild(newRow);
-        });
-
-        // Ensure the pre-requisites dropdown is updated when a new course is added
-        document.querySelector('#course-tables-container tbody').addEventListener('DOMNodeInserted', function(event) {
-            const rows = Array.from(document.querySelectorAll('#course-tables-container tbody tr'));
-            rows.forEach((row, index) => {
-                const preReqSelect = row.querySelector('.pre-requisites');
-                const previousCourses = rows.slice(0, index).map(r => r.querySelector('.course-code').value);
-                preReqSelect.innerHTML = `
-                    <option value="">None</option>
-                    ${previousCourses.map(course => `<option value="${course}">${course}</option>`).join('')}
-                `;
-            });
-        });
-
         function updateAcademicPeriodTabs() {
             const tabList = document.getElementById('academic-period-tab-list');
             const addBtn = document.getElementById('add-academic-period-btn');
+            const overviewTab = document.querySelector('.overview-tab');
             tabList.innerHTML = '';
+            tabList.appendChild(overviewTab);
             const periods = document.querySelectorAll('.academic-period');
             periods.forEach((period, index) => {
                 const tab = document.createElement('li');
@@ -1630,6 +1735,8 @@
             // Show the first period by default
             if (periods.length > 0) {
                 showAcademicPeriod(1);
+            } else {
+                showAcademicPeriod('overview');
             }
         }
 
@@ -1640,7 +1747,118 @@
             document.querySelectorAll('.academic-period-tab').forEach(tab => {
                 tab.classList.toggle('active', tab.getAttribute('data-period-index') == index);
             });
+            document.getElementById('overview').style.display = index === 'overview' ? 'block' : 'none';
         }
+
+        function updateProgramTypeHeader() {
+            const programType = document.getElementById('program-type').value;
+            const headerText = programType.charAt(0).toUpperCase() + programType.slice(1);
+            document.getElementById('program-type-header').textContent = headerText;
+        }
+
+        document.getElementById('program-type').addEventListener('change', updateProgramTypeHeader);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgramTypeHeader();
+            // ...existing code...
+        });
+
+        function updateProgramCalendarRows() {
+            const programCalendarBody = document.getElementById('program-calendar-body');
+            const periods = document.querySelectorAll('.academic-period');
+            programCalendarBody.innerHTML = '';
+
+            periods.forEach((period, index) => {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="start-date"><input type="date" placeholder="Start Date"></td>
+                    <td class="end-date"><input type="date" placeholder="End Date"></td>
+                    <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
+                    <td class="gpa"><input type="number" step="0.01" placeholder="GPA"></td>
+                `;
+                programCalendarBody.appendChild(newRow);
+            });
+        }
+
+        document.getElementById('add-academic-period-btn').addEventListener('click', function(event) {
+            // ...existing code...
+            updateProgramCalendarRows();
+        });
+
+        document.getElementById('add-term-btn').addEventListener('click', function() {
+            // ...existing code...
+            updateProgramCalendarRows();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // ...existing code...
+            updateProgramCalendarRows();
+        });
+
+        document.getElementById('auto-populate-btn').addEventListener('click', function() {
+            const numWeeks = parseInt(document.getElementById('num-weeks').value);
+            const startDate = new Date(document.getElementById('auto-start-date').value);
+            const weekStartDay = document.getElementById('week-start-day').value;
+            const weekEndDay = document.getElementById('week-end-day').value;
+
+            if (isNaN(numWeeks) || !startDate) {
+                alert('Please fill in all fields correctly.');
+                return;
+            }
+
+            const programCalendarBody = document.getElementById('program-calendar-body');
+            programCalendarBody.innerHTML = '';
+
+            let currentDate = new Date(startDate);
+            for (let i = 0; i < numWeeks; i++) {
+                const newRow = document.createElement('tr');
+                const endDate = new Date(currentDate);
+                endDate.setDate(endDate.getDate() + (getDayIndex(weekEndDay) - getDayIndex(weekStartDay)));
+
+                newRow.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td class="start-date"><input type="date" value="${currentDate.toISOString().slice(0, 10)}" placeholder="Start Date"></td>
+                    <td class="end-date"><input type="date" value="${endDate.toISOString().slice(0, 10)}" placeholder="End Date"></td>
+                    <td class="units"><input type="number" step="0.01" placeholder="Units"></td>
+                    <td class="gpa"><input type="number" step="0.01" placeholder="GPA"></td>
+                `;
+                programCalendarBody.appendChild(newRow);
+
+                currentDate.setDate(currentDate.getDate() + 7); // Move to the next week
+            }
+
+            // Display the calculated end date
+            const finalEndDate = new Date(startDate);
+            finalEndDate.setDate(finalEndDate.getDate() + (numWeeks * 7) - 1);
+            document.getElementById('calculated-end-date').textContent = `Calculated End Date: ${finalEndDate.toISOString().slice(0, 10)}`;
+        });
+
+        function getDayIndex(day) {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return days.indexOf(day);
+        }
+
+        function calculateEndDate() {
+            const numWeeks = parseInt(document.getElementById('num-weeks').value);
+            const startDate = new Date(document.getElementById('auto-start-date').value);
+            const weekStartDay = document.getElementById('week-start-day').value;
+            const weekEndDay = document.getElementById('week-end-day').value;
+
+            if (isNaN(numWeeks) || !startDate) {
+                document.getElementById('calculated-end-date').textContent = '';
+                return;
+            }
+
+            const finalEndDate = new Date(startDate);
+            finalEndDate.setDate(finalEndDate.getDate() + (numWeeks * 7) - 1);
+            document.getElementById('calculated-end-date').textContent = `Calculated End Date: ${finalEndDate.toISOString().slice(0, 10)}`;
+        }
+
+        document.getElementById('num-weeks').addEventListener('input', calculateEndDate);
+        document.getElementById('auto-start-date').addEventListener('input', calculateEndDate);
+        document.getElementById('week-start-day').addEventListener('change', calculateEndDate);
+        document.getElementById('week-end-day').addEventListener('change', calculateEndDate);
     </script>
 </body>
 </html>
