@@ -606,38 +606,6 @@ document.querySelector('.add-course-btn').addEventListener('click', function() {
     coursesTableBody.appendChild(newRow);
 });
 
-// ...existing code...
-
-document.getElementById('add-all-courses-btn').addEventListener('click', function() {
-    const coursesTableBody = document.querySelector('#course-tables-container tbody');
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
-        <td><input type="text" class="flowchart" placeholder="Flowchart"></td>
-        <td><input type="text" class="course-code" placeholder="Course Code"></td>
-        <td><input type="text" class="course-title" placeholder="Course Title"></td>
-        <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
-    `;
-    coursesTableBody.appendChild(newRow);
-});
-
-// ...existing code...
-
-document.getElementById('add-all-courses-btn').addEventListener('click', function() {
-    const coursesTableBody = document.querySelector('#course-tables-container tbody');
-    const newRow = document.createElement('tr');
-    newRow.innerHTML = `
-        <td><input type="text" class="term-taken" placeholder="Term Taken"></td>
-        <td><input type="text" class="flowchart" placeholder="Flowchart"></td>
-        <td><input type="text" class="course-code" placeholder="Course Code"></td>
-        <td><input type="text" class="course-title" placeholder="Course Title"></td>
-        <td><input type="number" class="units" step="0.01" placeholder="Units"></td>
-    `;
-    coursesTableBody.appendChild(newRow);
-});
-
-// ...existing code...
-
 document.getElementById('add-all-courses-btn').addEventListener('click', function() {
     const coursesTableBody = document.querySelector('#course-tables-container tbody');
     const newRow = document.createElement('tr');
@@ -715,6 +683,85 @@ document.querySelector('#course-tables-container tbody').addEventListener('DOMNo
             ${previousCourses.map(course => `<option value="${course}">${course}</option>`).join('')}
         `;
     });
+});
+
+// ...existing code...
+
+function updateCurrentAcademicInfo() {
+    const currentDate = new Date();
+    const periods = document.querySelectorAll('.academic-period');
+    let currentPeriod = 'N/A';
+    let currentWeekNumber = 'N/A';
+
+    periods.forEach((period, index) => {
+        const weeks = period.querySelectorAll('.week-table tbody tr');
+        weeks.forEach(week => {
+            const startDate = new Date(week.querySelector('.week-start').value);
+            const endDate = new Date(week.querySelector('.week-end').value);
+            if (currentDate >= startDate && currentDate <= endDate) {
+                currentPeriod = `Academic Period ${index + 1}`;
+                currentWeekNumber = week.cells[0].textContent.trim();
+            }
+        });
+    });
+
+    document.getElementById('current-academic-period').textContent = currentPeriod;
+    document.getElementById('current-week-number').textContent = currentWeekNumber;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateTimeAndDate();
+    setInterval(updateTimeAndDate, 1000);
+    setInterval(updateCurrentAcademicInfo, 1000); // Update academic info every second
+
+    const tabLinks = document.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    function showTab(tabId) {
+        tabContents.forEach(content => {
+            content.style.display = content.id === tabId ? 'block' : 'none';
+        });
+    }
+
+    tabLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const tabId = this.getAttribute('data-tab');
+            showTab(tabId);
+        });
+    });
+
+    // Show the first tab by default
+    showTab('home');
+
+    const currentTimeDateDiv = document.getElementById('current-time-date');
+    const timezoneSelector = document.getElementById('timezone-selector');
+
+    currentTimeDateDiv.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
+        timezoneSelector.style.display = 'block';
+        timezoneSelector.style.top = `${event.clientY}px`;
+        timezoneSelector.style.left = `${event.clientX}px`;
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!timezoneSelector.contains(event.target) && event.target !== currentTimeDateDiv) {
+            timezoneSelector.style.display = 'none';
+        }
+    });
+
+    document.getElementById('timezone').addEventListener('change', function() {
+        currentTimezone = this.value;
+        updateTimeAndDate();
+        timezoneSelector.style.display = 'none';
+    });
+
+    // Load timezone options from external file
+    fetch('timezone-options.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('timezone').innerHTML = data;
+        });
 });
 
 // ...existing code...

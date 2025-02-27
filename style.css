@@ -3,10 +3,6 @@ html {
     background-color: white;
 }
 
-* {
-    font-family: 'Space Grotesk', sans-serif;
-}
-
 h1{
     font-size: 5em;
     font-weight: bold;
@@ -19,6 +15,7 @@ body {
     width: 80%;
     margin: auto;
     padding: 20px;
+    font-family: 'Satoshi-Regular', sans-serif;
 }
 
 .course-input-container {
@@ -622,4 +619,28 @@ nav ul li a:hover, nav ul li a.active {
 #academic-period-tab-list li a.add-tab:hover {
     color: #f2f2f2;
     background-color: #0039c8;
+}
+
+.auto-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.auto-input-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.auto-input-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.auto-input-fields input,
+.auto-input-fields select {
+    width: 200px; /* Set a fixed width for input fields and select elements */
 }
