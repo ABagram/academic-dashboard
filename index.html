@@ -100,14 +100,35 @@
             <div class="program-card">
                 <div id="program-name" placeholder="Program Name"></div>
                 <div id="program-code" placeholder="Program Code"></div>
-                <select id="program-level">
-                    <option value="undergraduate">Undergraduate</option>
-                    <option value="graduate">Graduate</option>
-                    <option value="post-graduate">Post-Graduate</option>
-                </select>
             </div>
             <!-- Move program overview content here -->
             <h2>Program Overview</h2>
+            <select id="program-level">
+                <optgroup label="Primary Education">
+                    <option value="elementary-school">Elementary School</option>
+                </optgroup>
+                <optgroup label="Middle Education">
+                    <option value="middle-school">Middle School</option>
+                </optgroup>
+                <optgroup label="Secondary Education">
+                    <option value="high-school">High School</option>
+                    <option value="junior-high-school">Junior High School</option>
+                    <option value="senior-high-school">Senior High School</option>
+                </optgroup>
+                <optgroup label="Post-Secondary Education">
+                    <option value="undergraduate">Undergraduate</option>
+                    <option value="graduate">Graduate</option>
+                    <option value="post-graduate">Post-Graduate</option>
+                </optgroup>
+                <optgroup label="Vocational Education">
+                    <option value="certificate">Certificate</option>
+                    <option value="diploma">Diploma</option>
+                </optgroup>
+                <optgroup label="Continuing Education">
+                    <option value="professional-development">Professional Development</option>
+                    <option value="personal-enrichment">Personal Enrichment</option>
+                </optgroup>
+            </select>
             <div class="select-menu" id="program-type">
 
                 <div class="select-btn">
