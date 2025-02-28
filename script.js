@@ -366,22 +366,6 @@ document.addEventListener('DOMContentLoaded', function() {
     showTab('home');
 });
 
-const optionMenu = document.querySelector(".select-menu"),
-        selectBtn = optionMenu.querySelector(".select-btn"),
-        options = optionMenu.querySelectorAll(".option"),
-        sBtn_text = optionMenu.querySelector(".sBtn-text");
-
-selectBtn.addEventListener("click", () => optionMenu.classList.toggle("active"));
-
-options.forEach(option => {
-    option.addEventListener("click", () => {
-        let selectedOption = option.querySelector(".option-text").innerText;
-        sBtn_text.innerText = selectedOption;
-        
-        optionMenu.classList.remove("active");
-    });
-});
-
 document.getElementById('add-academic-period-btn').addEventListener('click', function() {
     const container = document.getElementById('academic-periods-container');
     const periodCount = container.children.length + 1;
