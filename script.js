@@ -259,12 +259,6 @@ document.getElementById('program-type').addEventListener('change', saveProgramDe
 document.getElementById('total-terms').addEventListener('input', saveProgramDetailsToLocalStorage);
 document.getElementById('program-start-date').addEventListener('input', saveProgramDetailsToLocalStorage);
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadProgramDetailsFromLocalStorage();
-    loadFromLocalStorage();
-    createCourseTable();
-});
-
 document.getElementById('toggle-view-btn').addEventListener('click', function() {
     const cardsContainer = document.getElementById('course-cards-container');
     const tableContainer = document.getElementById('course-table-container');
@@ -335,36 +329,6 @@ function createCourseTable() {
 
     tableContainer.innerHTML = tableHTML;
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    createCourseTable();
-    // ...existing code...
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    const tabLinks = document.querySelectorAll('.tab-link');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    function showTab(tabId) {
-        tabContents.forEach(content => {
-            content.style.display = content.id === tabId ? 'block' : 'none';
-        });
-        tabLinks.forEach(link => {
-            link.classList.toggle('active', link.getAttribute('data-tab') === tabId);
-        });
-    }
-
-    tabLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const tabId = this.getAttribute('data-tab');
-            showTab(tabId);
-        });
-    });
-
-    // Show the first tab by default
-    showTab('home');
-});
 
 document.getElementById('add-academic-period-btn').addEventListener('click', function() {
     const container = document.getElementById('academic-periods-container');
@@ -669,32 +633,67 @@ document.querySelector('#course-tables-container tbody').addEventListener('DOMNo
     });
 });
 
-// ...existing code...
+// Initialize sidebar functionality
+function initializeSidebar() {
+    // Toggle sidebar
+    document.getElementById("expandBtn").addEventListener("click", toggleSidebar);
+    
+    // Handle dropdown menus
+    document.querySelectorAll('.dropdown-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.parentElement.classList.toggle('active');
+        });
+    });
 
-function updateCurrentAcademicInfo() {
-    const currentDate = new Date();
-    const periods = document.querySelectorAll('.academic-period');
-    let currentPeriod = 'N/A';
-    let currentWeekNumber = 'N/A';
-
-    periods.forEach((period, index) => {
-        const weeks = period.querySelectorAll('.week-table tbody tr');
-        weeks.forEach(week => {
-            const startDate = new Date(week.querySelector('.week-start').value);
-            const endDate = new Date(week.querySelector('.week-end').value);
-            if (currentDate >= startDate && currentDate <= endDate) {
-                currentPeriod = `Academic Period ${index + 1}`;
-                currentWeekNumber = week.cells[0].textContent.trim();
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        document.querySelectorAll('.dropdown-container.active').forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
             }
         });
     });
 
-    document.getElementById('current-academic-period').textContent = currentPeriod;
-    document.getElementById('current-week-number').textContent = currentWeekNumber;
+    // Update academic period links
+    updateAcademicPeriodSidebar();
 }
 
+// Update academic period links in sidebar
+function updateAcademicPeriodSidebar() {
+    const periods = document.querySelectorAll('.academic-period');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    
+    // Clear existing period links except Overview
+    dropdownContent.querySelectorAll('.period-link').forEach(link => link.remove());
+    
+    // Add new period links
+    periods.forEach((period, index) => {
+        const periodNumber = index + 1;
+        const newLink = document.createElement('a');
+        newLink.href = `#period-${periodNumber}`;
+        newLink.className = 'tab-link period-link';
+        newLink.setAttribute('data-tab', `period-${periodNumber}`);
+        newLink.setAttribute('data-tooltip', `Period ${periodNumber}`);
+        newLink.innerHTML = `
+            <i class='bx bx-calendar'></i>
+            <span class="menu-text">Period ${periodNumber}</span>
+        `;
+        dropdownContent.appendChild(newLink);
+    });
+}
+
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize sidebar first
+    initializeSidebar();
+
+    loadProgramDetailsFromLocalStorage();
+    loadFromLocalStorage();
+    createCourseTable();
     updateTimeAndDate();
+
+    // Set up interval updates
     setInterval(updateTimeAndDate, 1000);
     setInterval(updateCurrentAcademicInfo, 1000); // Update academic info every second
 
@@ -740,12 +739,55 @@ document.addEventListener('DOMContentLoaded', function() {
         timezoneSelector.style.display = 'none';
     });
 
-    // Load timezone options from external file
-    fetch('timezone-options.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('timezone').innerHTML = data;
+    // Load timezone options from API
+    fetch('https://worldtimeapi.org/api/timezone')
+        .then(response => response.json())
+        .then(timezones => {
+            const timezoneSelect = document.getElementById('timezone');
+            timezones.forEach(timezone => {
+                const option = document.createElement('option');
+                option.value = timezone;
+                option.textContent = timezone;
+                timezoneSelect.appendChild(option);
+            });
         });
 });
 
 // ...existing code...
+
+// ==================== SIDEBAR FUNCTIONS ====================
+function toggleSidebar() {
+    const sidebar = document.getElementById("mySidebar");
+    const expandBtn = document.getElementById("expandBtn");
+    
+    // Toggle the collapsed class on the sidebar
+    sidebar.classList.toggle("collapsed");
+    
+    // Update chevron icon
+    expandBtn.innerHTML = sidebar.classList.contains("collapsed") 
+        ? "<i class='bx bx-chevron-right'></i>"
+        : "<i class='bx bx-chevron-left'></i>";
+}
+
+function updateAcademicPeriodSidebar() {
+    const periods = document.querySelectorAll('.academic-period');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    
+    // Clear existing period links except Overview
+    dropdownContent.querySelectorAll('.period-link').forEach(link => link.remove());
+    
+    // Add new period links
+    periods.forEach((period, index) => {
+        const periodNumber = index + 1;
+        const newLink = document.createElement('a');
+        newLink.className = 'tab-link period-link';
+        newLink.innerHTML = `
+            <i class='bx bx-calendar'></i>
+            <span class="menu-text">Period ${periodNumber}</span>
+        `;
+        newLink.href = `#period-${periodNumber}`;
+        newLink.dataset.tab = `period-${periodNumber}`;
+        newLink.dataset.tooltip = `Period ${periodNumber}`;
+        dropdownContent.appendChild(newLink);
+    });
+}

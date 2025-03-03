@@ -644,3 +644,81 @@ nav ul li a:hover, nav ul li a.active {
 .auto-input-fields select {
     width: 200px; /* Set a fixed width for input fields and select elements */
 }
+
+.sidebar {
+    width: 250px;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: #0039c8;
+    transition: 0.3s;
+    z-index: 1000;
+    padding-top: 60px;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar a {
+    color: white;
+    padding: 15px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    position: relative;
+}
+
+.sidebar i {
+    min-width: 30px;
+    font-size: 1.2rem;
+}
+
+.menu-text {
+    margin-left: 10px;
+    transition: 0.3s;
+}
+
+.sidebar.collapsed .menu-text {
+    display: none;
+}
+
+.sidebar.collapsed a:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #0039c8;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.dropdown-content {
+    display: none;
+    background-color: #002699;
+    padding-left: 20px;
+}
+
+.dropdown-container.active .dropdown-content {
+    display: block;
+}
+
+.dropdown-btn {
+    justify-content: space-between;
+}
+
+#main {
+    margin-left: 250px;
+    transition: 0.3s;
+}
+
+.sidebar.collapsed + #main {
+    margin-left: 60px;
+}
